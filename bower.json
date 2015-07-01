@@ -1,0 +1,22 @@
+{
+  "name": "dna-router",
+  "version": "1.0.0",
+  "authors": [
+    "Saquib <saquibvswild@gmail.com>"
+  ],
+  "description": "Angular's UI-router style router provider for Polymer 1.0",
+  "keywords": [
+    "Polymer",
+    "Router",
+    "DNA",
+    "router"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
