@@ -13,8 +13,7 @@ Setting up is easy two step proccess.
  ```html
 <dna-new-state state='home' route='/home'></dna-new-state>
 <dna-new-state state='user' route='/user/:id/'></dna-new-state>
-<dna-new-state 	state='app' route='/app' parent='home'> 
-// Create link /home/app
+<dna-new-state 	state='app' route='/app' parent='home'> // Create link /home/app
 </dna-new-state>
 ```
 
@@ -24,7 +23,8 @@ Setting up is easy two step proccess.
 <dna-view state='home' element='home-template' template='\templates\home.html'></dna-view>
 <dna-view state='user' element='login-template' template='\templates\user.html'></dna-view>
 <dna-view state='app' element='app-template' template='\app.html'></dna-view>
-<dna-view state='app' element='app-sidebar-template' template='\templates\app-sidebar.html'></dna-view>
+<dna-view state='app' element='app-sidebar-template' template='\templates\app-sidebar.html'>
+</dna-view>
 ```
 
 `home-template` is an polymer element inside `home.html`. It looks something like this:
