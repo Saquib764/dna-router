@@ -12,6 +12,9 @@
     "router"
   ],
   "license": "MIT",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
   "ignore": [
     "**/.*",
     "node_modules",
