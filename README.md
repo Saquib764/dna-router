@@ -39,7 +39,7 @@ Setting up is easy two step proccess.
 <script type="application/javascript">
     Polymer({
         is:'home-template',
-        behaviors: [DnaStateProviderBehavior],
+        behaviors: [DnaStateProviderBehavior],		// Note this
         attached: function(){
           // Do your normal stuff.
           // `param` is available in this.param
@@ -54,7 +54,6 @@ Setting up is easy two step proccess.
 To communicate just use `this.notify('your-event', data)`. This function will trigger `your-event` type event in all polymer element of same state. Listen it via `listeners`.
 
 ```script
-
 listeners:{
 	'your-event': '_toDoFunction',
 },
@@ -67,3 +66,7 @@ this.go('user', {id: 123}) //Second parameter is just object containg all params
 
 
 `Note: ` In above exapmple `template` path is absolute.
+
+Don't forget to include `Polymer 1.0` in your project ;) 
+
+Enjoy :)
