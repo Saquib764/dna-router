@@ -13,7 +13,8 @@ Setting up is easy two step proccess.
  ```html
 <dna-new-state state='home' route='/home'></dna-new-state>
 <dna-new-state state='user' route='/user/:id/'></dna-new-state>
-<dna-new-state 	state='app' route='/app' parent='home'>     // Create link /home/app
+<dna-new-state 	state='app' route='/app' parent='home'> 
+// Create link /home/app
 </dna-new-state>
 ```
 
