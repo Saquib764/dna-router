@@ -2,6 +2,8 @@
 
 `ui-router` is an advance Angular's ui-router style router provider for Polymer.
 
+This element is compatible with Polymer 1.0.0 and above.
+
 Install using bower: 
 ```script
 bower install dna-router
