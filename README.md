@@ -19,7 +19,7 @@ Setting up is easy two step proccess.
 
 
 2. Declare your `dna-view` for a particular State. You can have multiple `dna-view` for a single state. 
-```html
+ ```html
 <dna-view state='home' element='home-template' template='\templates\home.html'></dna-view>
 <dna-view state='user' element='login-template' template='\templates\user.html'></dna-view>
 <dna-view state='app' element='app-template' template='\app.html'></dna-view>
