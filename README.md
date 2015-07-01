@@ -2,6 +2,9 @@
 
 `ui-router` is an advance Angular's ui-router style router provider for Polymer.
 
+Install using bower: 
+bower install `dna-router`
+
 Setting up is easy two step proccess.
 1. Define state names and url. Import `dna-new-state.html`.
  ```html
