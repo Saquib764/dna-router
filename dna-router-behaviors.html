@@ -13,6 +13,7 @@
 
 
 (function(){
+	var sink = {};
 	var settings = {
 		home: null,
 		autoRedirect: true,
@@ -27,17 +28,6 @@
 					route = route.substring(0, route.length-1);
 			}
 			return route;
-		},
-		getViews: function(state){
-			var found = false;
-			views.forEach(function(view){
-				if(state == view.state){
-					if(!found)
-						found = [];
-					found.push(view);
-				}
-			});
-			return found;
 		},
 		_resolveRoute: function(route){
 			var self = this;
@@ -271,7 +261,7 @@
 	    	totalViews = document.querySelectorAll('dna-view').length;
 	    	if (totalViews == views.length){
 	    		viewsReady = true;
-	    		views[0].fire('dna-views-ready');
+	    		this.fire('dna-views-ready');
 	    	}
 	    },
 	    detached: function() {
@@ -300,11 +290,12 @@
 			param: Object,
 		},
 		attached: function(){
-			pages.push(this)
+			pages.push(this);
 		},
 		detached: function(){
 			var i = pages.indexOf(this);
 			if (i >= 0) {
+				console.log('detached')
 				pages.splice(i, 1);
 			}
 		},
@@ -313,6 +304,15 @@
 			pages.forEach(function(page){
 				page.fire(event, data);
 			})
+		},
+		save: function(key, value){
+			sink[key] = value;
+		},
+		fetch: function(key){
+			return sink[key];
+		},
+		fetchSink: function(){
+			return sink;
 		}
 	}
 })()
