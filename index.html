@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Dna-router by Saquib764</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Dna-router</h1>
+        <h2>An advance Angular&#39;s ui-router style router provider for Polymer.</h2>
+        <a href="https://github.com/Saquib764/dna-router" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="dna-router" class="anchor" href="#dna-router" aria-hidden="true"><span class="octicon octicon-link"></span></a>dna-router</h1>
+
+<p><code>ui-router</code> is an advance Angular's ui-router style router provider for Polymer.</p>
+
+<p>This element is compatible with Polymer 1.0.0 and above.</p>
+
+<p>Install using bower: </p>
+
+<pre lang="script"><code>bower install dna-router
+</code></pre>
+
+<p>Setting up is easy two step proccess.</p>
+
+<ol>
+<li>
+<p>Define state names and url. Import <code>dna-new-state.html</code>.</p>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">dna</span><span class="pl-e">-new-state</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>home<span class="pl-pds">'</span></span> <span class="pl-e">route</span>=<span class="pl-s"><span class="pl-pds">'</span>/home<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>&gt;
+&lt;<span class="pl-ent">dna</span><span class="pl-e">-new-state</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span> <span class="pl-e">route</span>=<span class="pl-s"><span class="pl-pds">'</span>/user/:id/<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>&gt;
+&lt;<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>  <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>app<span class="pl-pds">'</span></span> <span class="pl-e">route</span>=<span class="pl-s"><span class="pl-pds">'</span>/app<span class="pl-pds">'</span></span> <span class="pl-e">parent</span>=<span class="pl-s"><span class="pl-pds">'</span>home<span class="pl-pds">'</span></span>&gt; // Create link /home/app
+&lt;/<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>&gt;</pre></div>
+</li>
+<li>
+<p>Declare your <code>dna-view</code> for a particular State. You can have multiple <code>dna-view</code> for a single state. </p>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">dna</span><span class="pl-e">-view</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>home<span class="pl-pds">'</span></span> <span class="pl-e">element</span>=<span class="pl-s"><span class="pl-pds">'</span>home-template<span class="pl-pds">'</span></span> <span class="pl-e">template</span>=<span class="pl-s"><span class="pl-pds">'</span>\templates\home.html<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">dna</span><span class="pl-e">-view</span>&gt;
+&lt;<span class="pl-ent">dna</span><span class="pl-e">-view</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span> <span class="pl-e">element</span>=<span class="pl-s"><span class="pl-pds">'</span>login-template<span class="pl-pds">'</span></span> <span class="pl-e">template</span>=<span class="pl-s"><span class="pl-pds">'</span>\templates\user.html<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">dna</span><span class="pl-e">-view</span>&gt;
+&lt;<span class="pl-ent">dna</span><span class="pl-e">-view</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>app<span class="pl-pds">'</span></span> <span class="pl-e">element</span>=<span class="pl-s"><span class="pl-pds">'</span>app-template<span class="pl-pds">'</span></span> <span class="pl-e">template</span>=<span class="pl-s"><span class="pl-pds">'</span>\app.html<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">dna</span><span class="pl-e">-view</span>&gt;
+&lt;<span class="pl-ent">dna</span><span class="pl-e">-view</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>app<span class="pl-pds">'</span></span> <span class="pl-e">element</span>=<span class="pl-s"><span class="pl-pds">'</span>app-sidebar-template<span class="pl-pds">'</span></span> <span class="pl-e">template</span>=<span class="pl-s"><span class="pl-pds">'</span>\templates\app-sidebar.html<span class="pl-pds">'</span></span>&gt;
+&lt;/<span class="pl-ent">dna</span><span class="pl-e">-view</span>&gt;</pre></div>
+</li>
+</ol>
+
+<p><code>home-template</code> is an polymer element inside <code>home.html</code>. It looks something like this:</p>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">link</span> <span class="pl-e">rel</span>=<span class="pl-s"><span class="pl-pds">"</span>import<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>/bower/dna-router/dna-router-behaviors.html<span class="pl-pds">"</span></span>&gt;
+
+&lt;<span class="pl-ent">dom</span><span class="pl-e">-module</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>home-template<span class="pl-pds">'</span></span>&gt;
+<span class="pl-s1">    &lt;<span class="pl-ent">style</span> &gt;</span>
+<span class="pl-s1">    :host {</span>
+<span class="pl-s1">        <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">inline-block</span>;</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1">    &lt;/<span class="pl-ent">style</span>&gt;</span>
+    &lt;<span class="pl-ent">template</span>&gt;
+        &lt;<span class="pl-ent">div</span> <span class="pl-e">flex</span>&gt;home&lt;/<span class="pl-ent">div</span>&gt;
+    &lt;/<span class="pl-ent">template</span>&gt;
+&lt;/<span class="pl-ent">dom</span><span class="pl-e">-module</span>&gt;
+<span class="pl-s1">&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>application/javascript<span class="pl-pds">"</span></span>&gt;</span>
+<span class="pl-s1">    Polymer({</span>
+<span class="pl-s1">        is<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">'</span>home-template<span class="pl-pds">'</span></span>,</span>
+<span class="pl-s1">        behaviors<span class="pl-k">:</span> [DnaStateProviderBehavior],      <span class="pl-c">// Note this</span></span>
+<span class="pl-s1">        <span class="pl-en">attached</span><span class="pl-k">:</span> <span class="pl-k">function</span>(){</span>
+<span class="pl-s1">          <span class="pl-c">// Do your normal stuff.</span></span>
+<span class="pl-s1">          <span class="pl-c">// `param` is available in this.param</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1">    })</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
+
+<p><code>DnaStateProviderBehavior</code> must be imported in the template. It allows to access <code>param</code> and also to communicate between different views of same state by triggering custom events.</p>
+
+<p>To communicate just use <code>this.notify('your-event', data)</code>. This function will trigger <code>your-event</code> type event in all polymer element of same state. Listen it via <code>listeners</code>.</p>
+
+<pre lang="script"><code>listeners:{
+    'your-event': '_toDoFunction',
+},
+</code></pre>
+
+<p>You can navigate to a different <code>state</code> in <code>ui-router</code> fashion.</p>
+
+<pre lang="script"><code>this.go('user', {id: 123}) //Second parameter is just object containg all params
+</code></pre>
+
+<p><code>Note:</code> In above exapmple <code>template</code> path is absolute.</p>
+
+<p>Don't forget to include <code>Polymer 1.0</code> in your project ;) </p>
+
+<p>Enjoy :)</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Saquib764/dna-router/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Saquib764/dna-router/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Saquib764/dna-router"></a> is maintained by <a href="https://github.com/Saquib764">Saquib764</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
