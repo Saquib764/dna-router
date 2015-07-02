@@ -20,15 +20,6 @@
 	}
 
 	utility = {
-		formatRoute: function(route){
-			if(route!='/'|| route.length>1){
-				if(route[0]!='/')
-					route = '/'+route;
-				if(route[route.length-1] == '/')
-					route = route.substring(0, route.length-1);
-			}
-			return route;
-		},
 		_resolveRoute: function(route){
 			var self = this;
 			var found = false;
@@ -48,15 +39,6 @@
 				}
 			}
 			return {found: found, param: param};
-		},
-		_getRoute: function(state){
-			var s = states[state];
-			var route= s.route;
-
-			if(s.parent)
-				route = this._getRoute(s.parent)+route;
-			
-			return route;
 		},
 		_resolveUrl: function(){
 			var url = location.hash;
@@ -140,11 +122,6 @@
 				}
 			})
 		},
-		dnaFire: function(event, data){
-		    views.forEach(function(s) {
-		      s.fire(event, data);
-		    });
-		}
 	}
 
 
@@ -167,7 +144,15 @@
 		    	s.fire(event, data);
 		    });
 		},
-		formatRoute: utility.formatRoute,
+		formatRoute: function(route){
+			if(route!='/'|| route.length>1){
+				if(route[0]!='/')
+					route = '/'+route;
+				if(route[route.length-1] == '/')
+					route = route.substring(0, route.length-1);
+			}
+			return route;
+		},
 		_findParam: function(route){
 			var patt = /\/:[0-9a-z]+/ig;
 			var res = route.match(patt);
