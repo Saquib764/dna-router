@@ -67,6 +67,8 @@
 			return found;
 		},
 		_paramOk: function(state, param){
+			if(param==undefined)
+				param = {};
 			var state = utility.getState(state);
 			var ok = true;
 			if(state.param){
@@ -77,6 +79,18 @@
 					}
 			}
 			return ok;
+		},
+		urlFor: function(state,param){
+			var url = '#';
+			if(utility._paramOk(state, param)){
+				state = utility.getState(state);
+				var hash = state.absRoute;
+				for(attr in param){
+					hash = hash.replace(':'+attr, param[attr])
+				}
+				url = url+hash;
+			}
+			return url;
 		},
 		go: function(state, param){
 			if(state){
@@ -280,11 +294,11 @@
 		detached: function(){
 			var i = pages.indexOf(this);
 			if (i >= 0) {
-				console.log('detached')
 				pages.splice(i, 1);
 			}
 		},
 		go: utility.go,
+		urlFor: utility.urlFor,
 		notify: function(event, data){
 			pages.forEach(function(page){
 				page.fire(event, data);
@@ -301,5 +315,18 @@
 		}
 	}
 })()
+
+    Polymer({
+    	is: 'dna-sref',
+    	extends: 'a',
+		properties: {
+			param: String,
+			sref: String,
+		},
+        behaviors: [DnaStateProviderBehavior],
+    	attached: function(){
+    		this.href = this.urlFor(this.sref, this.param);
+    	}
+    })
 
 </script>
