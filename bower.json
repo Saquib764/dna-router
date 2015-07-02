@@ -9,7 +9,10 @@
     "Polymer",
     "Router",
     "DNA",
-    "router"
+    "router",
+    "web-components",
+    "web-component",
+    "polymer"
   ],
   "license": "MIT",
   "dependencies": {
