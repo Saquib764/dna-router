@@ -73,7 +73,7 @@ You can navigate to a different `state` in `ui-router` fashion.
 this.go('user', {id: 123}) //Second parameter is just object containg all params
 ```
 
-To use `a` tag, simply include `is='a-sref' in the element as follow:
+To use `a` tag, simply include `is='a-sref'` in the element as follow:
 ```html
 <a is='a-sref' sref='logout' param="{{parameters}}">Click here</a></pr-card>
 ```
