@@ -31,7 +31,11 @@
           <h1>
 <a id="dna-router" class="anchor" href="#dna-router" aria-hidden="true"><span class="octicon octicon-link"></span></a>dna-router</h1>
 
-<p><code>ui-router</code> is an advance Angular's ui-router style router provider for Polymer.</p>
+<p><code>Warning :</code> Unstable version.</p>
+
+<p><code>ui-router</code> is an advance Angular's ui-router style router provider for Polymer. It also have special web elements like <code>dna-view-states</code> which have multiple states linked with it. <code>dna-state-linked</code>, it activates or deactivates a particular state, similar to a <code>&lt;a&gt;</code> element.</p>
+
+<p>Developer can also link the states with user logged-in status. i.e some states will be visible only if user is logged in.</p>
 
 <p>This element is compatible with Polymer 1.0.0 and above.</p>
 
@@ -47,7 +51,7 @@
 <p>Define state names and url. Import <code>dna-new-state.html</code>.</p>
 
 <div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">dna</span><span class="pl-e">-new-state</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>home<span class="pl-pds">'</span></span> <span class="pl-e">route</span>=<span class="pl-s"><span class="pl-pds">'</span>/home<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>&gt;
-&lt;<span class="pl-ent">dna</span><span class="pl-e">-new-state</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span> <span class="pl-e">route</span>=<span class="pl-s"><span class="pl-pds">'</span>/user/:id/<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>&gt;
+&lt;<span class="pl-ent">dna</span><span class="pl-e">-new-state</span> <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span> <span class="pl-e">auth</span>=<span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span> <span class="pl-e">route</span>=<span class="pl-s"><span class="pl-pds">'</span>/user/:id/<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>&gt;      //Visible only if `status` is true
 &lt;<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>  <span class="pl-e">state</span>=<span class="pl-s"><span class="pl-pds">'</span>app<span class="pl-pds">'</span></span> <span class="pl-e">route</span>=<span class="pl-s"><span class="pl-pds">'</span>/app<span class="pl-pds">'</span></span> <span class="pl-e">parent</span>=<span class="pl-s"><span class="pl-pds">'</span>home<span class="pl-pds">'</span></span>&gt; // Create link /home/app
 &lt;/<span class="pl-ent">dna</span><span class="pl-e">-new-state</span>&gt;</pre></div>
 </li>
@@ -63,6 +67,19 @@
 </ol>
 
 <p><code>home-template</code> is an polymer element inside <code>home.html</code>. It looks something like this:</p>
+
+<ol>
+<li>Element with multiple states. This state will be visible for <code>home</code> and <code>user</code> states.
+<code>html
+&lt;dna-view-states states='home user'&gt;&lt;dna-view-states&gt; 
+</code>
+</li>
+<li>Passing user validated status and data using <code>dna-config</code>.
+<code>html
+&lt;dna-config status='{{loggedin_status}}' user='{{authData}}'&gt;&lt;/dna-config&gt;
+</code>
+</li>
+</ol>
 
 <div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">link</span> <span class="pl-e">rel</span>=<span class="pl-s"><span class="pl-pds">"</span>import<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>/bower/dna-router/dna-router-behaviors.html<span class="pl-pds">"</span></span>&gt;
 
