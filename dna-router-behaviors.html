@@ -1,35 +1,36 @@
 
 <script>
 
-// Events:
-// dna-state-registered  : Wheb an state is registered. Only on particular element
-// dna-all-states-registered  : When all states is registered.
-
-// dna-state-ready  :  When all states is ready to use.
-
-// dna-state-changed   :  Fired when state is changed.
-// dna-state-land  : Fired on an element when its selected
-// dna-state-leave : Fired when element is deselected
-
-
 (function(){
-	var sink = {};
-	var settings = {
-		home: null,
-		autoRedirect: true,
-	}
+	var utility = {
+		_resolveUrl: function(){
+			var url = location.hash;
+			if(url != ''){
+				var route = url.substring(1);
+				if(route[route.length-1]=='/')
+					route = route.substring(0,route.length-1);
+				if(route=='')
+					route='/'
 
-	utility = {
+				var res = utility._resolveRoute(route);
+				if(res.found)
+					utility.go(res.found, res.param)
+				else
+					console.log('wrong url')
+			}
+			else{
+				utility.go(config.home)
+			}
+		},
 		_resolveRoute: function(route){
-			var self = this;
 			var found = false;
 			var param = {};
-			for(var j=0; j<states.length; j++){
-				var state = states[j];
+			for(stateName in states){
+				var state = states[stateName];
 				var patt = new RegExp(state.regx,'i');
 				var res = patt.exec(route);
 				if(res){
-					found = state.state;
+					found = stateName;
 					if(state.param){
 						for(var i=0; i<state.param.length;i++){
 							param[state.param[i]] = res[1+i]
@@ -40,88 +41,60 @@
 			}
 			return {found: found, param: param};
 		},
-		_resolveUrl: function(){
-			var url = location.hash;
-			if(url != ''){
-				var route = url.substring(1);
-				if(route[route.length-1]=='/')
-					route = route.substring(0,route.length-1);
 
-				var res = utility._resolveRoute(route);
-				if(res.found)
-					utility.go(res.found, res.param)
-				else
-					console.log('wrong url')
-			}
-			else{
-				utility.go(settings.home)
-			}
-		},
-		getState: function(state){
-			var found = false;
-			states.forEach(function(cur){
-				if(state == cur.state){
-					found = cur;
-				}
-			});
-			return found;
-		},
 		_paramOk: function(state, param){
 			if(param==undefined)
 				param = {};
-			var state = utility.getState(state);
+			state = states[state];
 			var ok = true;
 			if(state.param){
 				for(var i=0; i<state.param.length; i++)
 					if(!(state.param[i] in param)){
-						ok = false
+						ok = false;
 						break;
 					}
 			}
 			return ok;
 		},
-		urlFor: function(state,param){
-			var url = '#';
-			if(utility._paramOk(state, param)){
-				state = utility.getState(state);
-				var hash = state.absRoute;
-				for(attr in param){
-					hash = hash.replace(':'+attr, param[attr])
+		go: function(next, param){
+			if(next){
+				if(next == 'error'){
+					utility.notify(current, 'dna-leave');
+					current = next;
+					utility.notify(current, 'dna-load');
 				}
-				url = url+hash;
-			}
-			return url;
-		},
-		go: function(state, param){
-			if(state){
-				if(utility._paramOk(state, param)){
-					if(current){
-						utility.notify(current, 'dna-state-leave');
-					}
-					var previous = current;
+				else if(utility._paramOk(next, param)){
 
-					current = state;
+					var state = states[next];
+					if((loggedin && state.auth)|| !state.auth){
+						if(current){
+							utility.notify(current, 'dna-leave');
+						}
+						var previous = current;
 
-					var stateInfo = utility.getState(current);
-					stateInfo.hash = stateInfo.absRoute;
-					for(attr in param){
-						stateInfo.hash = stateInfo.hash.replace(':'+attr, param[attr])
-					}
-					// Send Param data
-					if(stateInfo){
-						var data={};
-						data.route = stateInfo.route;
-						data.absRoute = stateInfo.absRoute;
-						data.hash = stateInfo.hash;
-						data.previous = previous;
-						data.param = param;
-						ignoreHashChange = true;
-						utility.notify(current, 'dna-state-land', data)
-						location.hash= stateInfo.hash;
-						// utility.dnaFire('dna-state-changed')
+						current = next;
+						state.hash = state.absRoute;
+						for(attr in param){
+							state.hash = state.hash.replace(':'+attr, param[attr])
+						}
+						// Send Param data
+						if(state){
+							var data={};
+							data.route = state.route;
+							data.absRoute = state.absRoute;
+							data.hash = state.hash;
+							data.previous = previous;
+							data.param = param;
+							ignoreHashChange = true;
+							utility.notify(current, 'dna-load', data);
+							location.hash= state.hash;
+							// utility.dnaFire('dna-state-changed')
+						}
+						else
+							console.log('ERROR: Selected state not found')
 					}
 					else
-						console.log('ERROR: Selected state not found')
+						utility.go('error')
 				}
 				else 
 					console.log('Check Parameter')
@@ -136,28 +109,54 @@
 				}
 			})
 		},
-	}
+	};
 
-
-	//Store all states
-	var states=[];
-	var loadedStates = 0;
-
-	// This is true when all states is registered
-	var allStatesRegistered = false;
-
-	DnaStateRegisterBehavior = {
-		listeners: {
-			'dna-all-states-registered': '_makeAbsRoutes',
+	var config = {
+		auth: false,
+		home: 'home',
+	};
+	var loggedin = false;
+	var configured = true;
+	var auth=null;
+	DnaConfigBehavior = {
+		properties: {
+			user: {
+				type: Object,
+				observer: '_loginStatusChanged',
+			},
+			status: {
+				type: Boolean,
+			}
 		},
 		attached: function(){
-			totalStates = document.querySelectorAll('dna-new-state').length;
+			if(this.getAttribute('auth-req')!=undefined)
+				config.auth = true;
+
+			configured = true;
+			if(allStatesRegistered && !stateReady)
+				StateManager._readyStates();
 		},
-		dnaFire: function(event, data){
-		    states.forEach(function(s){
-		    	s.fire(event, data);
-		    });
-		},
+		_loginStatusChanged: function(){
+			auth = this.user;
+			if(this.status){
+				loggedin = true
+				utility._resolveUrl();
+			}
+			else if(loggedin){
+				loggedin=false;
+				DnaStateProviderBehavior.notify('logged-out', auth)
+			}
+		}
+	};
+
+	// State related Data
+	var states = {};
+	var totalStateRegistered = 0;
+	var allStatesRegistered = false;
+	var stateReady = false;
+	var current = null;
+
+	StateManager= {
 		formatRoute: function(route){
 			if(route!='/'|| route.length>1){
 				if(route[0]!='/')
@@ -167,7 +166,34 @@
 			}
 			return route;
 		},
-		_findParam: function(route){
+		Push: function(stateNode){
+			var state = {};
+			state.route = StateManager.formatRoute(stateNode.route);
+			state.parent = null;
+
+			state.auth = null;
+			if(stateNode.auth)
+				state.auth = stateNode.auth;
+
+			if(stateNode.parent)
+				state.parent = stateNode.parent;
+			states[stateNode.state] = state;
+			totalStateRegistered++;
+		},
+
+		getAbsRoute: function(state){
+			var route = state.route;
+			if(route == '/')
+				route = '';
+			if(state.parent){
+				var parent = state.parent;
+				route= StateManager.getAbsRoute(states[state.parent])+route;
+			}
+			if(route=='')
+				route='/'
+			return route;
+		},
+		getParam: function(route){
 			var patt = /\/:[0-9a-z]+/ig;
 			var res = route.match(patt);
 			if(res){
@@ -176,81 +202,69 @@
 			}
 			return res;
 		},
-		_getRegX: function(route, param){
-			var patt = "([0-9a-z]+)";
+		getRegX: function(route, param){
+			var patt = "([0-9a-z-]+)";
 			if(param){
 				param.forEach(function(p){
 					route = route.replace(':'+p, patt);
 				})
 			}
-			route = route.replace(/\//g,'\\/')
+			route = route.replace(/\//g,'\\/');
 			route = '^'+route+'$';
 			return route;
 		},
-		getAbsRoutes: function(state){
-			var route = state.route;
-			if(route == '/')
-				route = '';
-			if(state.parent){
-				var parent = state.parent;
-				route= this.getAbsRoutes(this.getState(parent))+route;
+		_readyStates: function(){
+			for(state in states){
+				if(states[state].auth == null)
+					states[state].auth = config.auth;
+				var absRoute = StateManager.getAbsRoute(states[state])
+				states[state].absRoute = absRoute;
+
+				states[state].param = null;
+				var param = StateManager.getParam(absRoute)
+				if(param)
+					states[state].param = param;
+				states[state].regx = StateManager.getRegX(absRoute, param);
 			}
-			return route;
+			stateReady = true;
 		},
-		_makeAbsRoutes: function(){
-			var self = this;
-			states.forEach(function(state){
-				state.route = self.formatRoute(state.route)
-				var absRoute = self.getAbsRoutes(state);
-				if(absRoute == '')
-					absRoute = '/';
-				if(absRoute == '/' || state.getAttribute('home')!= undefined)
-					settings.home = state.state;
-				state.absRoute = absRoute;
-				var param = self._findParam(absRoute);
-				if(param){
-					state.param = param;
-				}
-				state.regx = self._getRegX(absRoute, param);
-			})
-			this.fire('dna-routes-ready');
+	}
+	DnaStateRegisterBehavior = {
+		properties: {
+			auth: Boolean,
+			state: String,
+			route: String,
+			parent: String,
 		},
-		getState: utility.getState,
-		register: function(state, route, parent){
-			if(state && route){
-				if(!parent||(parent && this.getState(parent))){
-					states.push(this)
+		attached: function(){
+			this.register()
+		},
+		register: function(){
+			if(this.state && this.route){
+					StateManager.Push(this)
 
 					this.fire('dna-state-registered');
+					var totalStates = document.querySelectorAll('dna-new-state').length;
 
-					if(totalStates == states.length){
+					if(totalStates == totalStateRegistered){
 						allStatesRegistered =true;
-						this.fire('dna-all-states-registered')
+						this._readyStates();
 					}
-				}
-				else
-					console.log('ERROR in DNA-state-provider: Cannot register State. May be parent doesnot exist')
 			}
 			else
 				console.log('WARNING in DNA-state-provider: some state cannot be registered.')
 		},
+		_readyStates: function(){
+			if(configured)
+				StateManager._readyStates();
+		}
 	};
-	
-	var ignoreHashChange = false;
-	window.onhashchange = function(e){
-		if(viewsReady && !ignoreHashChange)
-			utility._resolveUrl();
 
-		ignoreHashChange = false;
-	}
+	// View Related Data
 	var views = [];
+
 	var totalViews = 0;
-
-	//True when all States is ready
 	var viewsReady = false;
-
-	// Store name of current state
-	var current = null;
 
 	DnaViewManagerBehavior ={
 		properties: {
@@ -258,9 +272,10 @@
 	    attached: function() {
 	    	views.push(this);
 	    	totalViews = document.querySelectorAll('dna-view').length;
+	    	totalViews+= document.querySelectorAll('dna-state-linked').length
 	    	if (totalViews == views.length){
 	    		viewsReady = true;
-	    		this.fire('dna-views-ready');
+	    		this._viewsReady();
 	    	}
 	    },
 	    detached: function() {
@@ -269,9 +284,6 @@
 				recievers.splice(i, 1);
 			}
 	  	},
-	  	listeners: {
-	  		'dna-views-ready': '_viewsReady'
-	  	},
 		_viewsReady: function(e){
 			utility._resolveUrl();
 			ignoreHashChange = false;
@@ -279,17 +291,28 @@
 		getStates: function(){
 			return states;
 		},
-		go: utility.go,
-
+		go:	utility.go,
 	};
-	var pages = [];
+
+	pages = [];
+
+	var ignoreHashChange = false;
+
+	window.onhashchange = function(e){
+		if(viewsReady && !ignoreHashChange)
+			utility._resolveUrl();
+		ignoreHashChange = false;
+	}
 
 	DnaStateProviderBehavior = {
-		properties: {
-			param: Object,
+		listeners: {
+			'logged-in': '_reload',
+        	'on-load': 'onlogin'
 		},
 		attached: function(){
 			pages.push(this);
+			if(loggedin)
+				this.fire('on-load', auth)
 		},
 		detached: function(){
 			var i = pages.indexOf(this);
@@ -312,21 +335,108 @@
 		},
 		fetchSink: function(){
 			return sink;
+		},
+		_reload: function(){
+			console.log(views)
 		}
+
 	}
-})()
+
+})();
+
+// Events:
+// dna-state-registered  : Wheb an state is registered. Only on particular element
+// dna-all-states-registered  : When all states is registered.
+
+// dna-state-ready  :  When all states is ready to use.
+
+// dna-state-changed   :  Fired when state is changed.
+// dna-state-land  : Fired on an element when its selected
+// dna-state-leave : Fired when element is deselected
+
+
+//     Polymer({
+//     	is: 'a-sref',
+//     	extends: 'a',
+// 		properties: {
+// 			param: String,
+// 			sref: String,
+// 		},
+//         behaviors: [DnaStateProviderBehavior],
+//     	attached: function(){
+//     		this.href = this.urlFor(this.sref, this.param);
+//     	}
+//     });
 
     Polymer({
-    	is: 'a-sref',
-    	extends: 'a',
-		properties: {
-			param: String,
-			sref: String,
-		},
-        behaviors: [DnaStateProviderBehavior],
-    	attached: function(){
-    		this.href = this.urlFor(this.sref, this.param);
-    	}
-    })
+    	is: 'dna-config',
+    	behaviors: [DnaConfigBehavior]
+    });
+
 
 </script>
+<dom-module id='dna-state-linked'>
+	<style>
+		:host{
+			width: auto;
+			height: 100%;
+			margin-right: 10px;
+			display: inline-block;
+			position: relative;
+			cursor: pointer;
+		}
+		:host #marker{
+			width: 100%;
+			height: 3px;
+		}
+		:host #content{
+			padding: 0px 10px;
+			height: 47px;
+		}
+		:host.active{
+			color: rgba(200,0,0,1);
+		}
+		:host.active #marker{
+			background-color: rgba(200,0,0,1);
+		}
+	</style>
+	<template>
+		<div>
+			<div id='marker'></div>
+			<div id="content"><content></content></div>
+		</div>
+	</template>
+</dom-module>
+
+<script >
+	Polymer({
+    	is: 'dna-state-linked',
+		properties: {
+			state: String,
+			active: false,
+		},
+		behaviors: [DnaViewManagerBehavior],
+		listeners:{
+			'dna-load': '_onload',
+			'dna-leave': '_onleave',
+			click: '_clicked'
+		},
+		_clicked: function(){
+			this.go(this.state)
+		},
+    	_onload: function(e){
+			if(!this.active){
+				this.active = true;
+				this.toggleClass('active', true);
+				var param = null;
+				if(e.detail.param)
+					param = e.detail.param;
+			}
+		},
+		_onleave: function(){
+			this.toggleClass('active', false);
+			this.active = false;
+		},
+    });
+</script>
+

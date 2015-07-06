@@ -4,6 +4,7 @@
 	<style>
 		:host{
 			width: 100%;
+			height: auto;
 			display: none;
 		}
 		:host.active{
@@ -34,8 +35,8 @@ var P;
 			// console.log('yee')
 		},
 		listeners:{
-			'dna-state-land': '_onland',
-			'dna-state-leave': '_onleave',
+			'dna-load': '_onload',
+			'dna-leave': '_onleave',
 		},
 	    loadTemp: function(node, param){
 	        var self = this;
@@ -51,7 +52,7 @@ var P;
 	            console.log(e)
 	        });
 	    },
-		_onland: function(e){
+		_onload: function(e){
 			if(!this.active){
 				this.active = true;
 				this.toggleClass('active', true);
