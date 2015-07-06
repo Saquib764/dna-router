@@ -2,7 +2,7 @@
 
 `Warning :` Unstable version.
 
-`ui-router` is an advance Angular's ui-router style router provider for Polymer. It also have special web elements like `dna-view-states' which have multiple states linked with it. `dna-state-linked`, it activates or deactivates a particular state, similar to a `<a>` element.
+`ui-router` is an advance Angular's ui-router style router provider for Polymer. It also have special web elements like `dna-view-states` which have multiple states linked with it. `dna-state-linked`, it activates or deactivates a particular state, similar to a `<a>` element.
 
 Developer can also link the states with user logged-in status. i.e some states will be visible only if user is logged in.
 
