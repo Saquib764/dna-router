@@ -312,13 +312,16 @@
 		attached: function(){
 			pages.push(this);
 			if(loggedin)
-				this.fire('on-load', auth)
+				this.notify('on-load', auth)
 		},
 		detached: function(){
 			var i = pages.indexOf(this);
 			if (i >= 0) {
 				pages.splice(i, 1);
 			}
+		},
+		current: function(){
+			return current;
 		},
 		go: utility.go,
 		urlFor: utility.urlFor,
@@ -370,8 +373,10 @@
 
     Polymer({
     	is: 'dna-config',
-    	behaviors: [DnaConfigBehavior]
+    	behaviors: [DnaConfigBehavior],
     });
+
+
 
 
 </script>
@@ -408,6 +413,24 @@
 	</template>
 </dom-module>
 
+<dom-module id='dna-view-states'>
+	<style>
+		:host{
+			width: auto;
+			height: auto;
+			display: none;
+		}
+		:host.active{
+			display: inline-block;
+		}
+
+
+	</style>
+	<template>
+		<content></content>
+	</template>
+</dom-module>
+
 <script >
 	Polymer({
     	is: 'dna-state-linked',
@@ -437,6 +460,37 @@
 			this.toggleClass('active', false);
 			this.active = false;
 		},
+    });
+
+    Polymer({
+    	is: 'dna-view-states',
+    	properties: {
+    		states: {
+    			type:String,
+    		},
+    		active: {
+    			type: Boolean,
+    			value: false,
+    			observer: 'toggle'
+    		}
+    	},
+    	behaviors: [DnaStateProviderBehavior],
+    	onlogin: function(){
+    		var current = this.current();
+    		var res = this.states.split(' ');
+    		var stay = false;
+    		for(var i=0; i<res.length; i++){
+    			if(res[i]==current){
+    				stay = true;
+    				break;
+    			}
+    		}
+    		if(this.active!=stay)
+    			this.active=!this.active;
+    	},
+    	toggle: function(){
+    		this.toggleClass('active', this.active);
+    	}
     });
 </script>
 
