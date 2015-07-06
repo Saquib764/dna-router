@@ -1,6 +1,10 @@
 # dna-router
 
-`ui-router` is an advance Angular's ui-router style router provider for Polymer.
+`Warning :` Unstable version.
+
+`ui-router` is an advance Angular's ui-router style router provider for Polymer. It also have special web elements like `dna-view-states' which have multiple states linked with it. `dna-state-linked`, it activates or deactivates a particular state, similar to a `<a>` element.
+
+Developer can also link the states with user logged-in status. i.e some states will be visible only if user is logged in.
 
 This element is compatible with Polymer 1.0.0 and above.
 
@@ -14,7 +18,7 @@ Setting up is easy two step proccess.
 1. Define state names and url. Import `dna-new-state.html`.
  ```html
 <dna-new-state state='home' route='/home'></dna-new-state>
-<dna-new-state state='user' route='/user/:id/'></dna-new-state>
+<dna-new-state state='user' auth='true' route='/user/:id/'></dna-new-state>      //Visible only if `status` is true
 <dna-new-state 	state='app' route='/app' parent='home'> // Create link /home/app
 </dna-new-state>
 ```
@@ -30,6 +34,16 @@ Setting up is easy two step proccess.
 ```
 
 `home-template` is an polymer element inside `home.html`. It looks something like this:
+
+3. Element with multiple states. This state will be visible for `home` and `user` states.
+ ```html
+<dna-view-states states='home user'><dna-view-states> 
+```
+4. Passing user validated status and data using `dna-config`.
+ ```html
+<dna-config status='{{loggedin_status}}' user='{{authData}}'></dna-config>
+```
+
 
 
 ```html
@@ -73,10 +87,6 @@ You can navigate to a different `state` in `ui-router` fashion.
 this.go('user', {id: 123}) //Second parameter is just object containg all params
 ```
 
-To use `a` tag, simply include `is='a-sref'` in the element as follow:
-```html
-<a is='a-sref' sref='logout' param="{{parameters}}">Click here</a></pr-card>
-```
 
 `Note: ` In above exapmple `template` path is absolute.
 
