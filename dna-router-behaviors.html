@@ -4,6 +4,11 @@
 (function(){
 	var utility = {
 		_resolveUrl: function(){
+			// Extract hash from browser link
+			// Redirect to home if invalid url
+			// Get state using '_resolveRoute'
+			// Go to that state
+			// console.log wrong url for no state
 			var url = location.hash;
 			if(url != ''){
 				var route = url.substring(1);
@@ -23,6 +28,9 @@
 			}
 		},
 		_resolveRoute: function(route){
+			// Takes post hash url as input
+			// Resolve current state name and parameters
+			// return state and parameters
 			var found = false;
 			var param = {};
 			for(stateName in states){
@@ -43,6 +51,7 @@
 		},
 
 		_paramOk: function(state, param){
+			// Check for parameter inconsistency
 			if(param==undefined)
 				param = {};
 			state = states[state];
@@ -104,9 +113,18 @@
 		},
 		notify: function(state, name, data){
 			views.forEach(function(view){
-				if(view.state == state){
-					view.fire(name, data)
-				}
+				if(view.state){
+		    		var res = view.state.split(' ');
+		    		for(var i=0; i<res.length; i++){
+		    			if(res[i]==state){
+							view.fire(name, data)
+		    				break;
+		    			}
+		    		}
+		    	}
+				// if(view.state == state){
+				// 	view.fire(name, data)
+				// }
 			})
 		},
 	};
@@ -242,8 +260,6 @@
 		register: function(){
 			if(this.state && this.route){
 					StateManager.Push(this)
-
-					this.fire('dna-state-registered');
 					var totalStates = document.querySelectorAll('dna-new-state').length;
 
 					if(totalStates == totalStateRegistered){
@@ -267,12 +283,11 @@
 	var viewsReady = false;
 
 	DnaViewManagerBehavior ={
-		properties: {
-		},
 	    attached: function() {
 	    	views.push(this);
 	    	totalViews = document.querySelectorAll('dna-view').length;
 	    	totalViews+= document.querySelectorAll('dna-state-linked').length
+	    	totalViews+= document.querySelectorAll('dna-view-states').length
 	    	if (totalViews == views.length){
 	    		viewsReady = true;
 	    		this._viewsReady();
@@ -292,6 +307,9 @@
 			return states;
 		},
 		go:	utility.go,
+		current: function(){
+			return current;
+		},
 	};
 
 	pages = [];
@@ -434,10 +452,16 @@
 <script >
 	Polymer({
     	is: 'dna-state-linked',
-		properties: {
-			state: String,
-			active: false,
-		},
+    	properties: {
+    		state: {
+    			type:String,
+    		},
+    		active: {
+    			type: Boolean,
+    			value: false,
+    			observer: 'toggle'
+    		}
+    	},
 		behaviors: [DnaViewManagerBehavior],
 		listeners:{
 			'dna-load': '_onload',
@@ -447,25 +471,26 @@
 		_clicked: function(){
 			this.go(this.state)
 		},
-    	_onload: function(e){
+    	_onload: function(e){	
 			if(!this.active){
 				this.active = true;
-				this.toggleClass('active', true);
 				var param = null;
 				if(e.detail.param)
 					param = e.detail.param;
 			}
 		},
-		_onleave: function(){
-			this.toggleClass('active', false);
-			this.active = false;
-		},
+    	_onleave: function(){
+    		this.active = false;
+    	},
+    	toggle: function(){
+    		this.toggleClass('active', this.active);
+    	}
     });
 
     Polymer({
     	is: 'dna-view-states',
     	properties: {
-    		states: {
+    		state: {
     			type:String,
     		},
     		active: {
@@ -474,19 +499,24 @@
     			observer: 'toggle'
     		}
     	},
-    	behaviors: [DnaStateProviderBehavior],
-    	onlogin: function(){
+    	behaviors: [DnaViewManagerBehavior],
+		listeners:{
+			'dna-load': '_onload',
+			'dna-leave': '_onleave',
+		},
+    	_onload: function(){
     		var current = this.current();
-    		var res = this.states.split(' ');
-    		var stay = false;
+
+    		var res = this.state.split(' ');
     		for(var i=0; i<res.length; i++){
     			if(res[i]==current){
-    				stay = true;
+    				this.active = true;
     				break;
     			}
     		}
-    		if(this.active!=stay)
-    			this.active=!this.active;
+    	},
+    	_onleave: function(){
+    		this.active = false;
     	},
     	toggle: function(){
     		this.toggleClass('active', this.active);
