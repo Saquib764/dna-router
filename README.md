@@ -67,7 +67,11 @@ Import all element:
 	var conf = document.querySelector('#conf');
 	conf.auth = true
 	```
-
+4. `S-ref` element:
+	```html
+	<a is='s-ref' goto='["users",{"user_id":"56"}]'>To state users</a>
+	```
+	`goto` takes an array as input. First is state name and second item is object with params. Its similar to `ui-router` `s-ref`.
 # Executing a function on page load
 `dna-router` provides a `DNA` object. 
 ```script
