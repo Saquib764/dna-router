@@ -26,6 +26,8 @@ Import all element:
 	```
 	By default, `dna-view` converts `element` name into camel case and imports file named so in base directory. This file must contain `home-template` element. Example, above imports `\homeTemplate.html`.
 
+	All params is available in `home-template` polymer properties `params`.
+	
 	To import file from different directory:
 	```html
 	<dna-view
