@@ -14,6 +14,7 @@ Import all element:
 ```
 
 1. Define states and routes:
+
 	```html
 	<dna-new-state state='home' route='/home'></dna-new-state>
 	<dna-new-state state='user' route='/user/:id/'></dna-new-state>
