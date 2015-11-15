@@ -1,0 +1,30 @@
+<dom-module id="home-template">
+	<style>
+	    :host {
+	      position: relative;
+	      width: 100px;
+	    }
+	</style>
+	<template>
+		<div class="input">
+		Home
+		<a is='s-ref' goto='["contact"]'>sdf</a>
+		</div>
+	</template>
+</dom-module>
+
+<script>
+
+Polymer({
+	is: 'home-template',
+	properties: {
+		params: {
+			type: 'Object'
+		}
+	},
+	attached: function(){
+		console.log('d', this.params);
+
+	},
+});
+</script>

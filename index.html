@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <title>Yolap</title>
+        <meta charset="UTF-8">
+        <meta name="author" content="Md Saquib Alam">
+
+        <meta http-equiv="cache-control" content="max-age=0" />
+        <meta http-equiv="cache-control" content="no-cache" />
+        <meta http-equiv="expires" content="0" />
+        <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+        <meta http-equiv="pragma" content="no-cache" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+
+
+        <style type="text/css">
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        .s{
+            width: 200px;
+        }
+        </style>
+    </head>
+ 
+    <body class="fullbleed layout vertical" onload="run()">
+        <dna-config id='conf' home='contact' template='\template'></dna-config>
+
+        <dna-new-state state='home' route='/home/:id'></dna-new-state>
+        <dna-new-state state='contact' route='/contact'></dna-new-state>
+
+        <dna-view class='s'
+            state='home'
+            auth-req
+            element='auth-home-template'
+            no-auth-element='home-template'></dna-view>
+
+            <a is='s-ref' goto='["home",{"id":"ac"}]'>dlml</a>
+<!-- 
+        <dna-view state='home' class='s' element='contact-template'></dna-view> -->
+
+        <dna-view state='contact' element='contact-template'></dna-view>
+
+    </body>
+
+    <!-- Import all third party plugin here -->
+
+    <link rel="import" href="/bower_components/dna-router/dna-view.html">
+    <link rel="import" href="/bower_components/dna-router/dna-new-state.html">
+    <script src="/bower_components/webcomponentsjs/webcomponents.min.js"></script>
+    <script type="text/javascript">
+    DNA.run = function(){
+        console.log('yeo');
+        var conf = document.querySelector('#conf');
+        // conf.auth = true;
+    }
+    var run = function(){
+        // console.log('sad')
+      }
+
+    </script>
+
+</html>
