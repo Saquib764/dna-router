@@ -87,6 +87,7 @@ String.prototype.toCamelCase = function() {
 				if(next == 'error'){
 					utility.notify(current, 'dna-leave');
 					current = next;
+					currentParams = params;
 					utility.notify(current, 'dna-load');
 				}
 				else if(utility._paramOk(next, params)){
@@ -97,6 +98,7 @@ String.prototype.toCamelCase = function() {
 					var previous = current;
 
 					current = next;
+					currentParams = params;
 					state.hash = state.route;
 					for(attr in params){
 						state.hash = state.hash.replace(':'+attr, params[attr])
@@ -187,6 +189,7 @@ String.prototype.toCamelCase = function() {
 	var allStatesRegistered = false;
 	var stateReady = false;
 	var current = null;
+	var currentParams = null;
 
 	StateManager= {
 		formatRoute: function(route){
@@ -285,8 +288,11 @@ window.addEventListener('WebComponentsReady', function() {
 		},
 		clicked: function(e){
 			e.preventDefault()
-			if(current!=this.goto[0])
-				this.go(this.goto[0], this.goto[1])
+
+			console.log( this );
+
+			if(current!=this.goto[0] || ( this.goto.length > 1 && currentParams != this.goto[1] ) )
+				this.go( this.goto[0], this.goto[1] )
 
 		},
 		go: utility.go,
@@ -597,4 +603,3 @@ window.addEventListener('WebComponentsReady', function() {
     	}
     });
 </script>
-
