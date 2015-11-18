@@ -291,14 +291,12 @@ window.addEventListener('WebComponentsReady', function() {
 			if(DNA.ready){
 				var state = utility.getState(this.goto[0])
 				var params = this.goto[1]
-				
-				state.hash = state.route
+				var hash = state.route;
 
 				for(attr in params){
-					state.hash = state.route.replace(':'+attr, params[attr])
+					hash = hash.replace(':'+attr, params[attr])
 				}
-				
-				this.setAttribute('href', '#'+state.hash);
+				this.setAttribute('href', '#'+hash);
 			}
 		},
 	}
