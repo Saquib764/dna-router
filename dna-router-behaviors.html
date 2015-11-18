@@ -280,20 +280,11 @@ window.addEventListener('WebComponentsReady', function() {
 				observer: '_setHREF'
 			}
 		},
-		listeners: {
-			click: 'clicked'
-		},
+		// listeners: {
+		// 	click: 'clicked',
+		// },
 		attached: function(){
 			srefs.push(this)
-		},
-		clicked: function(e){
-			e.preventDefault()
-
-			console.log( this );
-
-			if(current!=this.goto[0] || ( this.goto.length > 1 && currentParams != this.goto[1] ) )
-				this.go( this.goto[0], this.goto[1] )
-
 		},
 		go: utility.go,
 		_setHREF: function(){
