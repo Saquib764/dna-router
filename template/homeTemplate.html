@@ -23,19 +23,9 @@ Polymer({
 			type: 'Object'
 		}
 	},
-	behaviors: [httpBehavior],
+	behaviors: [],
 	attached: function(){
 		console.log('d', this.params);
-		this.http.send({
-				url: 'http://httpbin.org/get',
-				headers: {
-					a: 'df'
-				}
-			})
-			.then(function(res){
-				console.log(res)
-			})
-
 	},
 });
 </script>

@@ -31,7 +31,8 @@
 
         <dna-new-state state='home' route='/home/:id'></dna-new-state>
         <dna-new-state state='contact' route='/contact'></dna-new-state>
-
+<dna-many-view>
+asdas
         <dna-view class='s'
             state='home'
             template=''
@@ -39,12 +40,13 @@
             element='auth-home-template'
             no-auth-element='home-template'></dna-view>
 
-            <a is='s-ref' goto='["home",{"id":"ac"}]'>dlml</a>
 <!-- 
         <dna-view state='home' class='s' element='contact-template'></dna-view> -->
 
-        <dna-view state='contact' element='contact-template'></dna-view>
+</dna-many-view>
 
+            <a is='s-ref' goto='["home",{"id":"ac"}]'>dlml</a>
+<dna-view state='contact' element='contact-template'></dna-view>
     </body>
 
     <!-- Import all third party plugin here -->
