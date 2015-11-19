@@ -381,6 +381,25 @@ window.addEventListener('WebComponentsReady', function() {
 		},
 	};
 
+	DnaManyViewBehavior = {
+		hostAttributes: {
+			active: false,
+		},
+		listeners: {
+			'page-load-begin': '_pageLoadBegin',
+			'page-leave': '_pageLeave',
+		},
+	    attached: function() {
+	    	// views.push(this);
+	    },
+		_pageLoadBegin: function(){
+	        this.setAttribute('active', true);
+		},
+		_pageLeave: function(){
+	        this.removeAttribute('active');
+		},
+	}
+
 	pages = [];
 
 	var ignoreHashChange = false;
@@ -395,47 +414,6 @@ window.addEventListener('WebComponentsReady', function() {
 	// 	ignoreHashChange = false;
 	//   	// console.log(window.location)
 	// });
-
-	DnaStateProviderBehavior = {
-		listeners: {
-			'logged-in': '_reload',
-        	'on-load': 'onlogin'
-		},
-		attached: function(){
-			pages.push(this);
-			if(loggedin)
-				this.notify('on-load', auth)
-		},
-		detached: function(){
-			var i = pages.indexOf(this);
-			if (i >= 0) {
-				pages.splice(i, 1);
-			}
-		},
-		current: function(){
-			return current;
-		},
-		go: utility.go,
-		urlFor: utility.urlFor,
-		notify: function(event, data){
-			pages.forEach(function(page){
-				page.fire(event, data);
-			})
-		},
-		save: function(key, value){
-			sink[key] = value;
-		},
-		fetch: function(key){
-			return sink[key];
-		},
-		fetchSink: function(){
-			return sink;
-		},
-		_reload: function(){
-			console.log(views)
-		}
-
-	}
 
 })();
 
@@ -473,59 +451,3 @@ window.addEventListener('WebComponentsReady', function() {
 
 </script>
 
-<dom-module id='dna-view-states'>
-	<style>
-		:host{
-			width: auto;
-			height: auto;
-			display: none;
-		}
-		:host.active{
-			display: inline-block;
-		}
-
-
-	</style>
-	<template>
-		<content></content>
-	</template>
-</dom-module>
-
-<script >
-
-    Polymer({
-    	is: 'dna-view-states',
-    	properties: {
-    		state: {
-    			type:String,
-    		},
-    		active: {
-    			type: Boolean,
-    			value: false,
-    			observer: 'toggle'
-    		}
-    	},
-    	behaviors: [DnaViewBehavior],
-		listeners:{
-			'dna-load': '_onload',
-			'dna-leave': '_onleave',
-		},
-    	_onload: function(){
-    		var current = this.current();
-
-    		var res = this.state.split(' ');
-    		for(var i=0; i<res.length; i++){
-    			if(res[i]==current){
-    				this.active = true;
-    				break;
-    			}
-    		}
-    	},
-    	_onleave: function(){
-    		this.active = false;
-    	},
-    	toggle: function(){
-    		this.toggleClass('active', this.active);
-    	}
-    });
-</script>

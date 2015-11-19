@@ -76,6 +76,7 @@ Import all element:
 	```
 	
 	`goto` takes an array as input. First is state name and second item is object with params. Its similar to `ui-router` `s-ref`.
+
 # Executing a function on page load
 `dna-router` provides a `DNA` object. 
 ```script

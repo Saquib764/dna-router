@@ -18,6 +18,25 @@
 	</template>
 </dom-module>
 
+<dom-module id='dna-many-view'>
+	<style>
+		:host{
+			width: 100%;
+			height: auto;
+			display: none;
+		}
+		:host([active]){
+			display: inline-block;
+		}
+
+
+	</style>
+	<template>
+		<content></content>
+	</template>
+</dom-module>
+
+
 <dom-module id='s-ref'>
 	<template>
 		<content></content>
@@ -34,8 +53,15 @@ var P;
 		attached: function(){
 			P = this;
 		},
-
 	});
+
+    Polymer({
+    	is: 'dna-many-view',
+    	behaviors: [DnaManyViewBehavior],
+		attached: function(){
+			console.log('dna-many-view');
+		},
+    });
 
 	Polymer({
 		is: 's-ref',
