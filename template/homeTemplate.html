@@ -15,6 +15,7 @@
 
 <script>
 
+
 Polymer({
 	is: 'home-template',
 	properties: {
@@ -22,8 +23,18 @@ Polymer({
 			type: 'Object'
 		}
 	},
+	behaviors: [httpBehavior],
 	attached: function(){
 		console.log('d', this.params);
+		this.http.send({
+				url: 'http://httpbin.org/get',
+				headers: {
+					a: 'df'
+				}
+			})
+			.then(function(res){
+				console.log(res)
+			})
 
 	},
 });
