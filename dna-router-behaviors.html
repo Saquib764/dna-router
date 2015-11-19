@@ -385,12 +385,17 @@ window.addEventListener('WebComponentsReady', function() {
 		hostAttributes: {
 			active: false,
 		},
+		properties: {
+			state: {
+				type: String,
+			}
+		},
 		listeners: {
 			'page-load-begin': '_pageLoadBegin',
 			'page-leave': '_pageLeave',
 		},
 	    attached: function() {
-	    	// views.push(this);
+	    	views.push(this);
 	    },
 		_pageLoadBegin: function(){
 	        this.setAttribute('active', true);
