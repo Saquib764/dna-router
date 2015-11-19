@@ -1,4 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-request.html">
+<link rel="import" href="./dna-http-behavior.html">
 <script>
 var DNA = {
 	ready: false,
@@ -359,7 +361,7 @@ window.addEventListener('WebComponentsReady', function() {
 	        }
         	if(element){
 
-	        	var file = '\\'+element.toCamelCase()+'.html';
+	        	var file = '/'+element.toCamelCase()+'.html';
 	        	template +=file;
 
 		        Polymer.Base.importHref(template ,function(){
@@ -470,38 +472,6 @@ window.addEventListener('WebComponentsReady', function() {
 
 
 </script>
-<dom-module id='dna-state-linked'>
-	<style>
-		:host{
-			width: auto;
-			height: 100%;
-			margin-right: 10px;
-			display: inline-block;
-			position: relative;
-			cursor: pointer;
-		}
-		:host #marker{
-			width: 100%;
-			height: 3px;
-		}
-		:host #content{
-			padding: 0px 10px;
-			height: 47px;
-		}
-		:host.active{
-			color: rgba(200,0,0,1);
-		}
-		:host.active #marker{
-			background-color: rgba(200,0,0,1);
-		}
-	</style>
-	<template>
-		<div>
-			<div id='marker'></div>
-			<div id="content"><content></content></div>
-		</div>
-	</template>
-</dom-module>
 
 <dom-module id='dna-view-states'>
 	<style>
@@ -522,42 +492,6 @@ window.addEventListener('WebComponentsReady', function() {
 </dom-module>
 
 <script >
-	Polymer({
-    	is: 'dna-state-linked',
-    	properties: {
-    		state: {
-    			type:String,
-    		},
-    		active: {
-    			type: Boolean,
-    			value: false,
-    			observer: 'toggle'
-    		}
-    	},
-		behaviors: [DnaViewBehavior],
-		listeners:{
-			'dna-load': '_onload',
-			'dna-leave': '_onleave',
-			click: '_clicked'
-		},
-		_clicked: function(){
-			this.go(this.state)
-		},
-    	_onload: function(e){	
-			if(!this.active){
-				this.active = true;
-				var param = null;
-				if(e.detail.param)
-					param = e.detail.param;
-			}
-		},
-    	_onleave: function(){
-    		this.active = false;
-    	},
-    	toggle: function(){
-    		this.toggleClass('active', this.active);
-    	}
-    });
 
     Polymer({
     	is: 'dna-view-states',
