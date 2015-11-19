@@ -77,6 +77,16 @@ Import all element:
 	
 	`goto` takes an array as input. First is state name and second item is object with params. Its similar to `ui-router` `s-ref`.
 
+5. `dna-many-view` element.
+	This element is visible only if any `dna-view` inside this element or any of it's `state` is active.
+	```html
+	<dna-many-view state='abc xyz'>
+		This Example
+		<dna-view state='home' ....></dna-view>
+	</dna-many-view>
+	```
+	In above example, many view is visible for states `abc, xyz and home`. For any other state none of its content is visible. `"This Example"` is not visible for some state, i.e `login`.
+
 # Executing a function on page load
 `dna-router` provides a `DNA` object. 
 ```script
