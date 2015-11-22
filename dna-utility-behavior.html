@@ -1,0 +1,118 @@
+<script type="text/javascript">
+	DnaUtilityBehavior = {
+		http: function(options){
+			var APPLICATION_JSON = 'application/json';
+			var CONTENT_TYPE_APPLICATION_JSON = {'Content-Type': APPLICATION_JSON + ';charset=utf-8'};
+			this.Defaults = {
+				method: 'GET',
+				headers: {
+					'Content-Type' : 'dff',
+				},
+			}
+
+            var isArray = function (obj) {
+                return Object.prototype.toString.call(obj) === '[object Array]';
+            };
+            var makeParams = function (obj) {
+            	var s =[]
+            	for(attr in obj){
+            		var v = obj[attr];
+            		if(isArray(v)){
+            			for(var i=0; i<v.length; i++){
+            				var vv = v[i];
+            				if(typeof(vv) != 'string')
+            					vv = JSON.stringify(vv)
+            				s.push(attr+'='+encodeURIComponent(vv))
+            			}
+            		} else if(typeof(v) == 'object'){
+            				s.push(attr+'='+encodeURIComponent(JSON.stringify(v)))
+            		} else{
+            			s.push(attr+'='+encodeURIComponent(v))
+            		}
+            	}
+            	return s.join('&').replace(/%20/g, '+');
+            };
+            toJson = function(str,k){
+            	var obj;
+            	if(typeof(str) == 'object'){
+            		obj = str;
+            	} else{
+            		try{
+            			obj = eval('('+str+')');
+            		}
+            		catch (e){
+            			return str;
+            		}
+            	}
+            	if(typeof(obj) == 'number')
+            		return obj;
+            	if(isArray(obj)){
+            		for(var i = 0; i< obj.length; i++)
+            			obj[i] = toJson(obj[i])
+            		return obj;
+            	}
+            	for(attr in obj){
+            		obj[attr] = toJson(obj[attr], attr);
+            	}
+            	return obj;
+            }
+
+            function makeUrl(mUrl){
+            	return mUrl
+            }
+
+			function ajaxRequest(){
+				var activexmodes=["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"] //activeX versions to check for in IE
+					if (window.ActiveXObject){ //Test for support for ActiveXObject in IE first (as XMLHttpRequest in IE7 is broken)
+					for (var i=0; i<activexmodes.length; i++){
+						try{
+							return new ActiveXObject(activexmodes[i])
+						}
+						catch(e){
+						//suppress error
+						}
+					}
+				}
+				else if (window.XMLHttpRequest) // if Mozilla, Safari etc
+					return new XMLHttpRequest()
+				else
+					return false
+			}
+
+			var req = new ajaxRequest();
+
+			var method = options.method || this.Defaults.method;
+			method = method.toUpperCase();
+			console.log(method)
+			var url = makeUrl(options.url)
+			var data = options.data;
+			// data = makeParams(data);
+			data = JSON.stringify(data)
+			console.log(data)
+			if(method == 'GET'){
+				url+= ((url.indexOf('?') == -1) ? '?' : '&') + data;
+				data = null;
+			}
+
+			req.open(method, url, true);
+			req.setRequestHeader('Accept', "application/json, text/plain, */*")
+			req.setRequestHeader('Content-Type', 'application/json;charset=utf-8')
+			req.send(data)
+			return new Promise(function(resolve, reject){
+				req.onreadystatechange=function(){
+					if (req.readyState==4){
+						if (req.status==200 || window.location.href.indexOf("http")==-1){
+							var res = JSON.parse(req.response)
+							console.log(toJson(req.response))
+						}
+						else{
+							alert("An error has occured making the request")
+						}
+					}
+				}
+			});
+
+
+		}
+	}
+</script>
