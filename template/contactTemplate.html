@@ -19,10 +19,22 @@ Polymer({
 	properties: {
 		params: {
 			type: 'Object'
-		}
+		},
 	},
+	behaviors: [DnaUtilityBehavior],
 	attached: function(){
-		console.log('contact')
+		console.log('contact');
+		this.http({
+			method: 'POST',
+			url: 'http://httpbin.org/post',
+			headers: {
+
+			},
+			data: {
+				is: 'dfd',
+				ad: [1,2]
+			}
+		});
 	},
 });
 </script>
