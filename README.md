@@ -42,25 +42,34 @@ Import all element:
 	```html
 	<dna-view
 		state='home'
-		auth-req
+		on-auth
 		element='auth-home-template'
-		no-auth-element='home-template'></dna-view>
+		else-element='home-template'></dna-view>
 	```
-	If user is not authencated, `home-template` will be shown. To redirect to a different state. Example, `login`.
+	If user is not authenticated, `home-template` will be shown. To redirect to a different state. Example, `login`.
 	```html
 	<dna-view
 		state='home'
-		auth-req
+		on-auth
 		element='auth-home-template'
-		no-auth-state='login'></dna-view>
+		else-state='login'></dna-view>
 	```
+	Show some page only to 'unauthenticated' users
+	
+	<dna-view
+		state='home'
+		on-no-auth
+		element='login-template'
+		else-state='dashboard'></dna-view>
+	```
+
 
 3. Configure `dna-router`:
 	```html
 	<dna-config 
 		id='conf' 
 		home='some state' 
-		auth='true'  // authorise
+		auth  // authorise
 		template='\templates'> </dna-config>
 	```
 	By default `home` is state named `home` and `auth` is false.
