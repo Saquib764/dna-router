@@ -55,7 +55,7 @@ Import all element:
 		else-state='login'></dna-view>
 	```
 	Show some page only to 'unauthenticated' users
-	
+	```html
 	<dna-view
 		state='home'
 		on-no-auth
