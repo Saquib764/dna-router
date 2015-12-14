@@ -1,20 +1,65 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-request.html">
 <link rel="import" href="./dna-utility-behavior.html">
-<script>
-var DNA = {
-	ready: false,
-};
 
-String.prototype.toCamelCase = function() {
-    return this.replace(/^([A-Z])|[\s-_](\w)/g, function(match, p1, p2, offset) {
-        if (p2) return p2.toUpperCase();
-        return p1.toLowerCase();        
-    });
-};
+<script type="text/javascript">
+	var DNA = {
+		ready: false,
+	}
+	String.prototype.toCamelCase = function() {
+	    return this.replace(/^([A-Z])|[\s-_](\w)/g, function(match, p1, p2, offset) {
+	        if (p2) return p2.toUpperCase();
+	        return p1.toLowerCase();        
+	    });
+	};
 
-(function(){
-	var utility = {
+	$state = null;
+
+	var utility;
+
+!function (){
+	window.addEventListener('WebComponentsReady', function() {
+		DNA.ready =true;
+		if(DNA.run){
+			DNA.run()
+		}
+
+		srefs.forEach(function(sref){
+			sref._setHREF();
+		})
+
+		utility._resolveUrl();
+		window.onhashchange = function(e){
+			// console.log(e)
+			utility._resolveUrl();
+		}
+
+	})
+
+	var states = [];
+	var views = [];
+	var manyViews = [];
+	var current = null;
+
+	var currentStateData = {
+		views: [],
+		manyViews: []
+	}
+
+
+
+
+
+	utility = {
+		_Exception: function(msg, data){
+			if(!data)
+				data = {};
+			return {
+				name: 'dna-router',
+				message: msg,
+				data: data,
+			}
+		},
 		_resolveUrl: function(){
 			// Extract hash from browser link
 			// Redirect to home if invalid url
@@ -62,18 +107,15 @@ String.prototype.toCamelCase = function() {
 			return {found: found, param: param};
 		},
 		getState: function(state){
-			var s=false;
-			states.forEach(function(e){
-				if(e.state == state)
-					s = e;
-			})
-			return s;
+			for(i=0; i<states.length; i++)
+				if(states[i].state == state)
+					return states[i];
+			return false;
 		},
 		_paramOk: function(state, param){
 			// Check for parameter inconsistency
 			if(param==undefined)
 				param = {};
-			state = utility.getState(state);
 			var ok = true;
 			if(state.params){
 				for(var i=0; i<state.params.length; i++)
@@ -85,113 +127,210 @@ String.prototype.toCamelCase = function() {
 			return ok;
 		},
 		go: function(next, params, resolve){
-			if(next){
-				if(next == 'error'){
-					utility.notify(current, 'dna-leave');
-					current = next;
-					currentParams = params;
-					utility.notify(current, 'dna-load');
-				}
-				else if(utility._paramOk(next, params)){
-					var state = utility.getState(next);
-					if(current){
-						utility.notify(current, 'page-leave');
-					}
-					var previous = current;
+			if(!next){
+				throw new utility._Exception('Insufficient parameters. State name missing')
+			}
 
-					current = next;
-					currentParams = params;
-					state.hash = state.route;
-					for(attr in params){
-						state.hash = state.hash.replace(':'+attr, params[attr])
-					}
-					// Send Param data
-					if(state){
-						var data={};
-						data.route = state.route;
-						data.hash = state.hash;
-						data.previous = previous;
-						data.params = params;
-						utility.notify(current, 'page-load-begin', data);
-						if(resolve != true){
-							window.history.pushState(null, null, '#'+state.hash)
-						}
-					}
-					else{
-						console.log('ERROR: Selected state not found')
-					}
-				}
-				else{
-					console.log('Check Parameter')
-				}
+			var nextState = utility.getState(next);
+			if(!nextState)
+				throw new utility._Exception("State '"+next+"' not found.")
+
+			// Check for Param
+			if(!utility._paramOk(nextState, params))
+				throw new utility._Exception('Wrong params', {state: next, expectedParams: nextState.params, recievedParams: params})
+
+
+			if(current && !utility._canLeave())
+				return false;
+
+			// Leave current
+			utility._leaveState();
+
+			var state = nextState;
+
+			utility._prepareStateData(next);
+			var previous = current;
+			current = next;
+
+			// Load next
+
+			state.hash = state.route;
+			for(attr in params){
+				state.hash = state.hash.replace(':'+attr, params[attr])
 			}
-			else{
-				console.log('ERROR : Invalid state')
+			// Send Param data
+			var data={};
+			data.route = state.route;
+			data.hash = state.hash;
+			data.previous = previous;
+			data.params = params;
+			data.current = current;
+			data.state = current;
+			utility._loadState(data)
+			if(resolve != true){
+				window.history.pushState(null, null, '#'+state.hash)
 			}
+			return true;
 		},
-		notify: function(state, name, data){
-			views.forEach(function(view){
-				if(view.state){
-		    		var res = view.state.split(' ');
+		_prepareStateData: function(state){
+			currentStateData = {
+				views: [],
+				manyViews: []
+			}
+			manyViews.forEach(function(many){
+				if(many.state){
+		    		var res = many.state.split(' ');
 		    		for(var i=0; i<res.length; i++){
 		    			if(res[i]==state){
-							view.fire(name, data);
+		    				currentStateData.manyViews.push(many);
 		    				break;
 		    			}
 		    		}
 		    	}
 			})
+			views.forEach(function(view){
+    			if(view.state==state){
+					currentStateData.views.push(view)
+    			}
+			})
+		},
+		_loadState: function(data){
+            $state = data;
+            $state.go = utility.go;
+			currentStateData.manyViews.forEach(function(many){
+				many.fire('page-load-begin', data)
+			})
+			currentStateData.views.forEach(function(view){
+				view.fire('page-load-begin', data)
+			})
+		},
+		_canLeave: function(){
+			for(i=0; i<currentStateData.views.length; i++){
+				var child = currentStateData.views[i].children[0];
+				if(child && child.onleave && !child.onleave())
+					return false;
+			}
+			return true;
+		},
+		_leaveState: function(){
+			currentStateData.views.forEach(function(view){
+				view.fire('page-leave')
+			})
+			currentStateData.manyViews.forEach(function(many){
+				many.fire('page-leave')
+			})
 		},
 	};
 
-
-	var config = {
-		auth: false,
-		home: 'home',
-		template: '',
-	};
-	var loggedin = false;
-	var configured = true;
-	var auth=null;
-
-	DnaConfigBehavior = {
+	DnaViewBehavior = {
+		hostAttributes: {
+			'on-auth': false,
+			'on-no-auth': false,
+			active: false,
+		},
 		properties: {
-			auth: {
-				type: Boolean,
-				value: false,
-				observer: '_authStatusChanged',
+			state: {
+				type: String,
 			},
 			template: {
 				type: String,
-				observer: '_templateUrl',
+				value: '',
 			},
-			home: {
+			element: {
 				type: String,
-				observer: '_homeChanged'
+			},
+			elseElement: {
+				type: String,
+			},
+			elseState: {
+				type: String,
 			},
 		},
-		_authStatusChanged: function(){
-			config.auth = this.auth;
-			if(DNA.ready){
-				console.log(this.auth)
-				utility._resolveUrl();
-			}
+		listeners: {
+			'page-load-begin': '_pageLoadBegin',
+			'page-leave': '_pageLeave',
 		},
-		_templateUrl: function(){
-			config.template = this.template;
+	    attached: function() {
+	    	views.push(this);
+	    },
+		_pageLoadBegin: function(e){
+	        var self = this;
+	        var element = false;
+	        var template = config.template + this.template;
+
+	        var onAuth = this.getAttribute('on-auth');
+	        var onNoAuth = this.getAttribute('on-no-auth');
+
+        	var goElse = false;
+        	if((onAuth!=null && !config.auth) || (onNoAuth!=null && config.auth)){
+        		goElse = true;
+        	}
+
+        	if(goElse){
+        		if(this.elseElement)
+        			element = this.elseElement;
+        		else if(this.elseState)
+        			utility.go(this.elseState)
+        		else if(config.elseState)
+        			utility.go(this.elseState)
+        		else
+        			console.log('Error')
+        	}
+        	else{
+	        	element = this.element;
+        	}
+
+
+        	if(element){
+	        	var file = '/'+element.toCamelCase()+'.html';
+	        	template +=file;
+
+		        Polymer.Base.importHref(template ,function(){
+		        	self.innerHTML='';
+		            var el = document.createElement(element);
+		            self.appendChild(el);
+		            self.setAttribute('active', true)
+		        });
+		    }
 		},
-		_homeChanged: function(){
-			config.home = this.home;
+		_pageLeave: function(){
+	        this.removeAttribute('active')
+	        this.innerHTML = ''
 		},
 	};
 
-	// State related Data
-	var states = [];
-	var totalStateRegistered = 0;
-	var allStatesRegistered = false;
-	var stateReady = false;
-	var current = null;
-	var currentParams = null;
+
+	DnaManyViewBehavior = {
+		hostAttributes: {
+			active: false,
+		},
+		properties: {
+			state: {
+				type: String,
+			}
+		},
+		listeners: {
+			'page-load-begin': '_pageLoadBegin',
+			'page-leave': '_pageLeave',
+		},
+	    attached: function() {
+	    	manyViews.push(this);
+	    },
+		_pageLoadBegin: function(e){
+			if(e.detail.state == current)
+	        	this.setAttribute('active', true);
+		},
+		_pageLeave: function(e){
+			// if(e.detail.state != current)
+	        	this.removeAttribute('active');
+		},
+	}
+
+
+
+
+
+
 
 	StateManager= {
 		formatRoute: function(route){
@@ -224,6 +363,7 @@ String.prototype.toCamelCase = function() {
 			return route;
 		},
 	}
+
 	DnaStateRegisterBehavior = {
 		properties: {
 			state: {
@@ -240,9 +380,6 @@ String.prototype.toCamelCase = function() {
 			},
 		},
 		attached: function(){
-			this.register();
-		},
-		register: function(){
 			if(this.state && this.route){
 				this.route = StateManager.formatRoute(this.route);
 				this.params = StateManager.getParams(this.route);
@@ -255,23 +392,54 @@ String.prototype.toCamelCase = function() {
 			}
 		},
 	};
-	// View Related Data
-	var views = [];
 
-	var totalViews = 0;
-	var viewsReady = false;
 
-window.addEventListener('WebComponentsReady', function() {
-	DNA.ready =true;
-	if(DNA.run){
-		DNA.run()
-	}
 
-	srefs.forEach(function(sref){
-		sref._setHREF();
-	})
-	utility._resolveUrl()
-})
+	var config = {
+		auth: false,
+		home: 'home',
+		template: '',
+		elseState: null,
+	};
+
+	DnaConfigBehavior = {
+		properties: {
+			auth: {
+				type: Boolean,
+				value: false,
+				reflectToAttribute: true,
+				observer: '_authStatusChanged',
+			},
+			template: {
+				type: String,
+				observer: '_templateUrl',
+			},
+			home: {
+				type: String,
+				observer: '_homeChanged'
+			},
+			elseState: {
+				type: String,
+				observer: '_elseState'
+			}
+		},
+		_authStatusChanged: function(){
+			config.auth = this.auth;
+			if(DNA.ready){
+				utility._resolveUrl();
+			}
+		},
+		_templateUrl: function(){
+			config.template = this.template;
+		},
+		_homeChanged: function(){
+			config.home = this.home;
+		},
+		_elseState: function(){
+			config.elseState = this.elseState;
+		}
+	};
+
 
 
 	var srefs = [];
@@ -282,9 +450,6 @@ window.addEventListener('WebComponentsReady', function() {
 				observer: '_setHREF'
 			}
 		},
-		// listeners: {
-		// 	click: 'clicked',
-		// },
 		attached: function(){
 			srefs.push(this)
 		},
@@ -303,156 +468,15 @@ window.addEventListener('WebComponentsReady', function() {
 		},
 	}
 
-	DnaViewBehavior = {
-		hostAttributes: {
-			'auth-req': false,
-			active: false,
-		},
-		properties: {
-			state: {
-				type: String,
-			},
-			template: {
-				type: String,
-				value: '',
-			},
-			element: {
-				type: String,
-			},
-			noAuthElement: {
-				type: String,
-			},
-			goToState: {
-				type: String,
-			},
-		},
-		listeners: {
-			'page-load-begin': '_pageLoadBegin',
-			'page-leave': '_pageLeave',
-		},
-	    attached: function() {
-	    	views.push(this);
-	    },
-		getStates: function(){
-			return states;
-		},
-		go:	utility.go,
-		current: function(){
-			return current;
-		},
-		_pageLoadBegin: function(e){
-	        var self = this;
-	        var element;
-	        var template = config.template + this.template;
 
-	        var authReq = this.getAttribute('auth-req');
-	        if((authReq!=null && config.auth) ||authReq == null){
-	        	// Auth not req
-	        	element = this.element
-	        }
-	        else{
-	        	// Auth req
-	        	if(this.noAuthElement)
-	        		element =this.noAuthElement;
-	        	else if(this.goToState)
-	        		utility.go(this.goToState)
-	        	else
-	        		console.log(' to login')
-	        }
-        	if(element){
-
-	        	var file = '/'+element.toCamelCase()+'.html';
-	        	template +=file;
-
-		        Polymer.Base.importHref(template ,function(){
-		        	// console.log(e.detail)
-		        	self.innerHTML='';
-		            var el = document.createElement(element);
-		            // el.param = null;
-		            el.params = e.detail.params;
-		            self.appendChild(el);
-		            self.setAttribute('active', true)
-		        });
-		    }
-		},
-		_pageLeave: function(){
-	        this.removeAttribute('active')
-	        this.innerHTML = ''
-		},
-	};
-
-	DnaManyViewBehavior = {
-		hostAttributes: {
-			active: false,
-		},
-		properties: {
-			state: {
-				type: String,
-			}
-		},
-		listeners: {
-			'page-load-begin': '_pageLoadBegin',
-			'page-leave': '_pageLeave',
-		},
-	    attached: function() {
-	    	views.push(this);
-	    },
-		_pageLoadBegin: function(){
-	        this.setAttribute('active', true);
-		},
-		_pageLeave: function(){
-	        this.removeAttribute('active');
-		},
-	}
-
-	pages = [];
-
-	var ignoreHashChange = false;
-
-	window.onhashchange = function(e){
-		// console.log(e)
-			utility._resolveUrl();
-	}
-	// window.addEventListener('popstate', function(e) {
-	// 	if(viewsReady && !ignoreHashChange)
-	// 		utility._resolveUrl();
-	// 	ignoreHashChange = false;
-	//   	// console.log(window.location)
-	// });
-
-})();
-
-// Events:
-// dna-state-registered  : Wheb an state is registered. Only on particular element
-// dna-all-states-registered  : When all states is registered.
-
-// dna-state-ready  :  When all states is ready to use.
-
-// dna-state-changed   :  Fired when state is changed.
-// dna-state-land  : Fired on an element when its selected
-// dna-state-leave : Fired when element is deselected
+}();
 
 
-//     Polymer({
-//     	is: 'a-sref',
-//     	extends: 'a',
-// 		properties: {
-// 			param: String,
-// 			sref: String,
-// 		},
-//         behaviors: [DnaStateProviderBehavior],
-//     	attached: function(){
-//     		this.href = this.urlFor(this.sref, this.param);
-//     	}
-//     });
 
-    Polymer({
-    	is: 'dna-config',
-    	behaviors: [DnaConfigBehavior],
-    });
-
-
+Polymer({
+	is: 'dna-config',
+	behaviors: [DnaConfigBehavior],
+});
 
 
 </script>
-

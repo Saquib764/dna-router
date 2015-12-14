@@ -21,10 +21,10 @@ Polymer({
 			type: 'Object'
 		},
 	},
-	behaviors: [DnaUtilityBehavior],
+	behaviors: [],
 	attached: function(){
 		console.log('contact');
-		this.http({
+		$http({
 			method: 'POST',
 			url: 'http://httpbin.org/post',
 			headers: {

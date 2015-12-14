@@ -31,14 +31,13 @@
 
         <dna-new-state state='home' route='/home/:id'></dna-new-state>
         <dna-new-state state='contact' route='/contact'></dna-new-state>
-<dna-many-view state='contact'>
+<dna-many-view>
 asdas
         <dna-view class='s'
             state='home'
-            template=''
-            auth-req
+            on-auth
             element='auth-home-template'
-            no-auth-element='home-template'></dna-view>
+            else-element='home-template'></dna-view>
 
 <!-- 
         <dna-view state='home' class='s' element='contact-template'></dna-view> -->
@@ -58,7 +57,7 @@ asdas
     DNA.run = function(){
         // console.log('yeo');
         var conf = document.querySelector('#conf');
-        // conf.auth = true;
+        conf.auth = true;
     }
     var run = function(){
         // console.log('sad')

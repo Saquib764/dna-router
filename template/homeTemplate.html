@@ -24,8 +24,14 @@ Polymer({
 		}
 	},
 	behaviors: [],
+	onleave: function(){
+		console.log(this.$state.params.id)
+		if(this.$state.params.id == 'e')
+			return false;
+		return true;
+	},
 	attached: function(){
-		console.log('d', this.params);
+		console.log('d', this.$state.params.id);
 	},
 });
 </script>
