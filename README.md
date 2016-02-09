@@ -7,6 +7,8 @@ Install using bower:
 ```script
 bower install dna-router
 ```
+`Update:` Added `Vulcanize` support.
+`Use:` Add 'manual-load' attribute in 'dna-config' tag and then import the vulcanized templates in your project.
 
 Import all element:
 ```script
@@ -77,6 +79,12 @@ Import all element:
 	To authosrise on fly using javascript:
 	```script
 	var conf = document.querySelector('#conf');
+	// Sending login context to views.
+	// Access it using '$state' global variable.
+	conf.context = {
+		author: 'Saquib Alam',
+		message: 'Star me :)'
+	};
 	conf.auth = true
 	```
 4. `S-ref` element:

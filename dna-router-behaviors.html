@@ -166,6 +166,7 @@
 			data.params = params;
 			data.current = current;
 			data.state = current;
+			data.context = config.context;
 			utility._loadState(data)
 			if(resolve != true){
 				window.history.pushState(null, null, '#'+state.hash)
@@ -285,12 +286,20 @@
 	        	var file = '/'+element.toCamelCase()+'.html';
 	        	template +=file;
 
-		        Polymer.Base.importHref(template ,function(){
+	        	if(config.manualLoad){
 		        	self.innerHTML='';
 		            var el = document.createElement(element);
 		            self.appendChild(el);
-		            self.setAttribute('active', true)
-		        });
+		            self.setAttribute('active', true);
+
+	        	} else{
+			        Polymer.Base.importHref(template ,function(){
+			        	self.innerHTML='';
+			            var el = document.createElement(element);
+			            self.appendChild(el);
+			            self.setAttribute('active', true);
+			        });
+			    }
 		    }
 		},
 		_pageLeave: function(){
@@ -400,6 +409,8 @@
 		home: 'home',
 		template: '',
 		elseState: null,
+		manualLoad: false,
+		context: {},
 	};
 
 	DnaConfigBehavior = {
@@ -421,7 +432,20 @@
 			elseState: {
 				type: String,
 				observer: '_elseState'
+			},
+			manualLoad: {
+				type: Boolean,
+				value: false,
+				reflectToAttribute: true,
+			},
+			context: {
+				type: Object,
+				value:{},
+				observer: '_contextChanged'
 			}
+		},
+		ready: function(){
+			config.manualLoad = this.manualLoad;
 		},
 		_authStatusChanged: function(){
 			config.auth = this.auth;
@@ -434,6 +458,9 @@
 		},
 		_homeChanged: function(){
 			config.home = this.home;
+		},
+		_contextChanged: function(){
+			config.context = this.context;
 		},
 		_elseState: function(){
 			config.elseState = this.elseState;
@@ -467,8 +494,6 @@
 			}
 		},
 	}
-
-
 }();
 
 

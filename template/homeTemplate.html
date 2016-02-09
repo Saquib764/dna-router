@@ -8,7 +8,8 @@
 	<template>
 		<div class="input">
 		Home
-		<a is='s-ref' goto='["contact"]'>sdf</a>
+		<a is='s-ref' goto='["contact"]'>sdf</a> 
+		<a is='s-ref' state='home' params='{{sd}}'>yy home</a>
 		</div>
 	</template>
 </dom-module>
@@ -16,22 +17,24 @@
 <script>
 
 
+
 Polymer({
 	is: 'home-template',
 	properties: {
-		params: {
-			type: 'Object'
+		sd: {
+			type: String,
+			value: 'bc'
 		}
 	},
 	behaviors: [],
 	onleave: function(){
-		console.log(this.$state.params.id)
-		if(this.$state.params.id == 'e')
+		console.log($state.params.id)
+		if($state.params.id == 'e')
 			return false;
 		return true;
 	},
 	attached: function(){
-		console.log('d', this.$state.params.id);
+		console.log($state.params.id)
 	},
 });
 </script>
