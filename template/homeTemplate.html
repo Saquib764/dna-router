@@ -7,34 +7,30 @@
 	</style>
 	<template>
 		<div class="input">
-		Home
-		<a is='s-ref' goto='["contact"]'>sdf</a> 
-		<a is='s-ref' state='home' params='{{sd}}'>yy home</a>
+		<h2>Hi your page is authenticated, and you have reached home.</h2>
+		<a is='s-ref' goto='["contact"]'>Contact</a>  
+		<br />
+		<input type="button" on-click='logout' value="Logout" />
 		</div>
 	</template>
 </dom-module>
 
 <script>
 
-
-
 Polymer({
 	is: 'home-template',
 	properties: {
-		sd: {
-			type: String,
-			value: 'bc'
+		params: {
+			type: 'Object'
 		}
 	},
-	behaviors: [],
-	onleave: function(){
-		console.log($state.params.id)
-		if($state.params.id == 'e')
-			return false;
-		return true;
+	logout: function(){
+		var conf = document.querySelector('#conf');
+		conf.auth = false;
 	},
 	attached: function(){
-		console.log($state.params.id)
+		console.log('Hi your page is authenticated, and you have reached home.');
+		console.log('context : ', $state.context)
 	},
 });
 </script>

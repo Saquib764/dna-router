@@ -1,0 +1,50 @@
+<dom-module id="login-template">
+	<style>
+	    :host {
+	      position: relative;
+	      width: 100px;
+	    }
+	</style>
+	<template>
+		<div class="input">
+		<h2>Hi! You have reached Login. Authenticate to continue.</h2>
+		<br>
+		<a is='s-ref' goto='["contact"]'>Contact</a>  
+		<a is='s-ref'  goto='["home"]'>Home</a>
+		<br />
+		<br />
+		<input type="button" on-click='authenticate' value="Authenticate" />
+		</div>
+	</template>
+</dom-module>
+
+<script>
+
+
+
+Polymer({
+	is: 'login-template',
+	properties: {
+		sd: {
+			type: String,
+			value: 'bc'
+		}
+	},
+	behaviors: [],
+	authenticate: function(){
+		var conf = document.querySelector('#conf');
+		conf.context = {
+			author: 'Saquib Alam',
+			message: 'Star me :)',
+		}
+		conf.auth = true;
+	},
+	onleave: function(){
+		console.log("Hi you are about to leave Login.")
+		return true;
+	},
+	attached: function(){
+		console.log("Hi! You have reached Login.")
+	},
+});
+</script>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='en'>
     <head>
-        <title>Yolap</title>
+        <title>dna-router</title>
         <meta charset="UTF-8">
         <meta name="author" content="Md Saquib Alam">
 
@@ -21,30 +21,63 @@
             margin: 0;
         }
         .s{
-            width: 200px;
+            width: 100%;
+        }
+        .footer{
+            color: grey;
+            margin: 20px;
+            margin-top: 30px;
         }
         </style>
     </head>
  
-    <body class="fullbleed layout vertical" onload="run()">
-        <dna-config id='conf' home='contact' template='\template'></dna-config>
+    <body class="fullbleed layout vertical">
+        <dna-config id='conf' home='contact' template='/template'></dna-config>
 
-        <dna-new-state state='home' route='/home/:id'></dna-new-state>
+        <dna-new-state state='home' route='/home'></dna-new-state>
         <dna-new-state state='contact' route='/contact'></dna-new-state>
-<dna-many-view>
-asdas
-        <dna-view class='s'
-            state='home'
-            on-auth
-            element='auth-home-template'
-            else-element='home-template'></dna-view>
 
-<!-- 
-        <dna-view state='home' class='s' element='contact-template'></dna-view> -->
+        <!-- Required if you use 'else-state' -->
+        <dna-new-state state='login' route='/login'></dna-new-state>
+        <h1>dna-router</h1>
+        <hr />
+        <br />
+        <br />
+        <dna-many-view>
+            <div>I am visible only on 'home' and 'login' states</div>
 
-</dna-many-view>
+                <!-- Un comment to use 'else-state' method -->
+        <!--         <dna-view class='s'
+                    state='home'
+                    on-auth
+                    element='home-template'
+                    else-element='login-template'></dna-view> -->
 
-<dna-view state='contact' element='contact-template'></dna-view>
+
+                <!-- Comment below two views if you uncommented above one. -->
+
+                <dna-view class='s' id='home'
+                    state='home'
+                    on-auth
+                    element='home-template'
+                    else-state='login'></dna-view>
+
+
+                <dna-view
+                    state='login'
+                    on-no-auth 
+                    element='login-template' 
+                    else-state='home'></dna-view>
+
+        </dna-many-view>
+
+        <dna-view state='contact' element='contact-template'></dna-view>
+
+        <div class="footer">
+            Built with love. By Saquib764.
+            Email: saquibvswild@gmail.com
+        </div>
+
     </body>
 
     <!-- Import all third party plugin here -->
@@ -56,12 +89,16 @@ asdas
     DNA.run = function(){
         // console.log('yeo');
         var conf = document.querySelector('#conf');
+        conf.on('state-changed', function(){
+            console.log($state)
+        })
+        var h = document.querySelector('#home');
+        h.on('page-active', function(e){
+            console.log('Home listener')
+        })
         // conf.auth = true;
     }
-    var run = function(){
-        // console.log('sad')
-      }
-
+ 
     </script>
 
 </html>

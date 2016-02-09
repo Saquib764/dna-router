@@ -250,6 +250,7 @@
 		listeners: {
 			'page-load-begin': '_pageLoadBegin',
 			'page-leave': '_pageLeave',
+			// 'page-active': '_pageActive'
 		},
 	    attached: function() {
 	    	views.push(this);
@@ -287,25 +288,31 @@
 	        	template +=file;
 
 	        	if(config.manualLoad){
-		        	self.innerHTML='';
-		            var el = document.createElement(element);
-		            self.appendChild(el);
-		            self.setAttribute('active', true);
+			        self._loadElement(element)
 
 	        	} else{
 			        Polymer.Base.importHref(template ,function(){
-			        	self.innerHTML='';
-			            var el = document.createElement(element);
-			            self.appendChild(el);
-			            self.setAttribute('active', true);
+			        	self._loadElement(element)
 			        });
 			    }
 		    }
+		},
+		_loadElement: function(element){
+        	this.innerHTML='';
+            var el = document.createElement(element);
+            this.appendChild(el);
+            this.setAttribute('active', true);
+            this.fire('page-active')
+            if(conf)
+            	conf.fire('state-changed')
 		},
 		_pageLeave: function(){
 	        this.removeAttribute('active')
 	        this.innerHTML = ''
 		},
+		on: function(event, func){
+			this.addEventListener(event, func)
+		}
 	};
 
 
@@ -321,21 +328,25 @@
 		listeners: {
 			'page-load-begin': '_pageLoadBegin',
 			'page-leave': '_pageLeave',
+			// 'page-active': '_pageActive'
 		},
 	    attached: function() {
 	    	manyViews.push(this);
 	    },
 		_pageLoadBegin: function(e){
-			if(e.detail.state == current)
+			if(e.detail.state == current){
 	        	this.setAttribute('active', true);
+	        	this.fire('page-active')
+			}
 		},
 		_pageLeave: function(e){
 			// if(e.detail.state != current)
 	        	this.removeAttribute('active');
 		},
+		on: function(event, func){
+			this.addEventListener(event, func)
+		}
 	}
-
-
 
 
 
@@ -413,6 +424,7 @@
 		context: {},
 	};
 
+	var conf = null;
 	DnaConfigBehavior = {
 		properties: {
 			auth: {
@@ -447,6 +459,9 @@
 		ready: function(){
 			config.manualLoad = this.manualLoad;
 		},
+		attached: function(){
+			conf = this;
+		},
 		_authStatusChanged: function(){
 			config.auth = this.auth;
 			if(DNA.ready){
@@ -464,6 +479,9 @@
 		},
 		_elseState: function(){
 			config.elseState = this.elseState;
+		},
+		on: function(event, func){
+			this.addEventListener(event, func)
 		}
 	};
 
