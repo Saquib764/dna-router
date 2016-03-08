@@ -49,7 +49,7 @@
                 <!-- Un comment to use 'else-state' method -->
         <!--         <dna-view class='s'
                     state='home'
-                    on-auth
+                    with-auth
                     element='home-template'
                     else-element='login-template'></dna-view> -->
 
@@ -58,14 +58,14 @@
 
                 <dna-view class='s' id='home'
                     state='home'
-                    on-auth
+                    with-auth
                     element='home-template'
                     else-state='login'></dna-view>
 
 
                 <dna-view
                     state='login'
-                    on-no-auth 
+                    with-no-auth 
                     element='login-template' 
                     else-state='home'></dna-view>
 

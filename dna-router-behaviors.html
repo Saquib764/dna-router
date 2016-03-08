@@ -225,8 +225,8 @@
 
 	DnaViewBehavior = {
 		hostAttributes: {
-			'on-auth': false,
-			'on-no-auth': false,
+			'with-auth': false,
+			'with-no-auth': false,
 			active: false,
 		},
 		properties: {
@@ -260,11 +260,11 @@
 	        var element = false;
 	        var template = config.template + this.template;
 
-	        var onAuth = this.getAttribute('on-auth');
-	        var onNoAuth = this.getAttribute('on-no-auth');
+	        var withAuth = this.getAttribute('with-auth');
+	        var withNoAuth = this.getAttribute('with-no-auth');
 
         	var goElse = false;
-        	if((onAuth!=null && !config.auth) || (onNoAuth!=null && config.auth)){
+        	if((withAuth!=null && !config.auth) || (withNoAuth!=null && config.auth)){
         		goElse = true;
         	}
 
