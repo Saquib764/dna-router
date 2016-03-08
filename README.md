@@ -1,5 +1,7 @@
 # dna-router
 
+`Note: ` `on-auth` and `on-no-auth` attributes changed to `with-auth` and `with-no-auth` due to `on-*` conflicts with current update of Polymer. Thanks to <a href='https://github.com/jom'> jom</a>
+
 `ui-router` is an advance Angular's ui-router style all html router provider for Polymer. It has `auth` status which enables user to show different views for same state.
 Inspired by ui-router: https://github.com/angular-ui/ui-router
 
