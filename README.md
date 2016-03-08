@@ -47,7 +47,7 @@ Import all element:
 	```html
 	<dna-view
 		state='home'
-		on-auth
+		with-auth
 		element='auth-home-template'
 		else-element='home-template'></dna-view>
 	```
@@ -55,7 +55,7 @@ Import all element:
 	```html
 	<dna-view
 		state='home'
-		on-auth
+		with-auth
 		element='auth-home-template'
 		else-state='login'></dna-view>
 	```
@@ -63,7 +63,7 @@ Import all element:
 	```html
 	<dna-view
 		state='home'
-		on-no-auth
+		with-no-auth
 		element='login-template'
 		else-state='dashboard'></dna-view>
 	```
