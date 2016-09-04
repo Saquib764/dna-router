@@ -9,7 +9,7 @@
 	String.prototype.toCamelCase = function() {
 	    return this.replace(/^([A-Z])|[\s-_](\w)/g, function(match, p1, p2, offset) {
 	        if (p2) return p2.toUpperCase();
-	        return p1.toLowerCase();        
+	        return p1.toLowerCase();
 	    });
 	};
 
@@ -492,25 +492,33 @@
 		properties: {
 			goto: {
 				type: Object,
-				observer: '_setHREF'
+			},
+			args: {
+				type: Object,
 			}
 		},
 		attached: function(){
 			srefs.push(this)
 		},
 		go: utility.go,
-		_setHREF: function(){
+		setHREF: function(params) {
 			if(DNA.ready){
-				var state = utility.getState(this.goto[0])
-				var params = this.goto[1]
+				var state = utility.getState(this.goto[0]);
 				var hash = state.route;
-
+				if(params !== undefined && typeof params != 'object')
+					params = JSON.parse(params);
 				for(attr in params){
-					hash = hash.replace(':'+attr, params[attr])
+					hash = hash.replace(':'+attr, params[attr]);
 				}
 				this.setAttribute('href', '#'+hash);
 			}
 		},
+
+		ready: function() {
+			if(undefined === this.goto) console.error('You must set "goto" property')
+			if(undefined !== this.args) this.setHREF(this.args);
+			else this.setHREF(this.goto[1]);
+		}
 	}
 }();
 

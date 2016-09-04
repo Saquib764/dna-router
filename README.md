@@ -5,7 +5,7 @@
 `ui-router` is an advance Angular's ui-router style all html router provider for Polymer. It has `auth` status which enables user to show different views for same state.
 Inspired by ui-router: https://github.com/angular-ui/ui-router
 
-Install using bower: 
+Install using bower:
 ```script
 bower install dna-router
 ```
@@ -16,7 +16,7 @@ Download starter kit at : <a href='https://github.com/Saquib764/starter-kit-dna-
 
 
 Import all element:
-```script
+```html
 <link rel="import" href="./bower_components/dna-router/dna.html">
 ```
 
@@ -35,7 +35,7 @@ Import all element:
 	By default, `dna-view` converts `element` name into camel case and imports file named so in base directory. This file must contain `home-template` element. Example, above imports `\homeTemplate.html`.
 
 	All params is available in `home-template` polymer properties `params`.
-	
+
 	To import file from different directory:
 	```html
 	<dna-view
@@ -73,16 +73,16 @@ Import all element:
 
 3. Configure `dna-router`:
 	```html
-	<dna-config 
-		id='conf' 
-		home='some state' 
+	<dna-config
+		id='conf'
+		home='some state'
 		auth  // authorise
 		template='\templates'> </dna-config>
 	```
 	By default `home` is state named `home` and `auth` is false.
 
 	To authosrise on fly using javascript:
-	```script
+	```js
 	var conf = document.querySelector('#conf');
 	// Sending login context to views.
 	// Access it using '$state' global variable.
@@ -93,11 +93,25 @@ Import all element:
 	conf.auth = true
 	```
 4. `S-ref` element:
-	```html
-	<a is='s-ref' goto='["users",{"user_id":"56"}]'>To state users</a>
-	```
-	
-	`goto` takes an array as input. First is state name and second item is object with params. Its similar to `ui-router` `s-ref`.
+	- With goto and params property
+		```html
+		<a is='s-ref' goto='["users"]' params='{"user_id":"56"}'>To state users</a>
+		```
+	You can use a Polymer variable in your params :
+		```html
+		<a is='s-ref' goto='["users"]' params='{"user_id":"{{userId}}"}'>To state users</a>
+		```
+
+	- With goto property only *(backward compatibility)*
+
+		`goto` takes an array as input. First is state name and second item is object with params. Its similar to `ui-router` `s-ref`.
+
+		```html
+		<a is='s-ref' goto='["users",{"user_id":"56"}]'>To state users</a>
+		```
+		However you can't use Polymer variables that way.
+
+	Use `$state.params.user_id` to access params.
 
 5. `dna-many-view` element.
 	This element is visible only if any `dna-view` inside this element or any of it's `state` is active.
@@ -110,8 +124,8 @@ Import all element:
 	In above example, many view is visible for states `abc, xyz and home`. For any other state none of its content is visible. `"This Example"` is not visible for some state, i.e `login`.
 
 # Executing a function on page load
-`dna-router` provides a `DNA` object. 
-```script
+`dna-router` provides a `DNA` object.
+```js
 DNA.run = function(){
 	// Do your stuff
 }
