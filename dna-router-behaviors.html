@@ -493,7 +493,7 @@
 			goto: {
 				type: Object,
 			},
-			args: {
+			params: {
 				type: Object,
 			}
 		},
@@ -516,7 +516,7 @@
 
 		ready: function() {
 			if(undefined === this.goto) console.error('You must set "goto" property')
-			if(undefined !== this.args) this.setHREF(this.args);
+			if(undefined !== this.params) this.setHREF(this.params);
 			else this.setHREF(this.goto[1]);
 		}
 	}
