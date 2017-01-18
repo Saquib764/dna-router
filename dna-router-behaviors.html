@@ -6,12 +6,6 @@
 	var DNA = {
 		ready: false,
 	}
-	String.prototype.toCamelCase = function() {
-	    return this.replace(/^([A-Z])|[\s-_](\w)/g, function(match, p1, p2, offset) {
-	        if (p2) return p2.toUpperCase();
-	        return p1.toLowerCase();
-	    });
-	};
 
 	$state = null;
 
@@ -75,10 +69,12 @@
 					route='/'
 
 				var res = utility._resolveRoute(route);
-				if(res.found)
+				if(res.found){
 					utility.go(res.found, res.param, true)
-				else
-					console.log('wrong url')
+				}else{
+					console.log('Page not found');
+					window.location.hash = "#/notfound"
+				}
 			}
 			else{
 				utility.go(config.home)
@@ -284,7 +280,7 @@
 
 
         	if(element){
-	        	var file = '/'+element.toCamelCase()+'.html';
+	        	var file = '/'+element+'.html';
 	        	template +=file;
 
 	        	if(config.manualLoad){

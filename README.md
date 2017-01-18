@@ -25,6 +25,7 @@ Import all element:
 	```html
 	<dna-new-state state='home' route='/home'></dna-new-state>
 	<dna-new-state state='user' route='/user/:id/'></dna-new-state>
+	<dna-new-state state='notfound' route='/notfound'></dna-new-state>
 	```
 2. Defining views. You can have multiple views for a single state.
 	```html
@@ -68,6 +69,13 @@ Import all element:
 		with-no-auth
 		element='login-template'
 		else-state='dashboard'></dna-view>
+	```
+
+	Set a not found page
+	```html
+	<dna-view
+		state='notfound'
+		element='notfound-template'></dna-view>
 	```
 
 
