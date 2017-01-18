@@ -124,7 +124,7 @@ Import all element:
 
 6. Define not found page:
 
-To define a route to page not found use the state `notfound`, set the route to page not found in `url` and create a `dna-view` with state `notfound` adding an element to be displayed if the page is not found.
+	To define a route to page not found use the state `notfound`, set the route to page not found in `url` and create a `dna-view` with state `notfound` adding an element to be displayed if the page is not found.
 
 	Define the route
 	```html
