@@ -73,7 +73,7 @@
 					utility.go(res.found, res.param, true)
 				}else{
 					console.log('Route not found');
-					window.location.hash = utility.getState('notfound').route;
+					window.location.hash = utility.getState('notfound').route || '/';
 				}
 			}
 			else{
