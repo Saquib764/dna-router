@@ -25,7 +25,6 @@ Import all element:
 	```html
 	<dna-new-state state='home' route='/home'></dna-new-state>
 	<dna-new-state state='user' route='/user/:id/'></dna-new-state>
-	<dna-new-state state='notfound' route='/notfound'></dna-new-state>
 	```
 2. Defining views. You can have multiple views for a single state.
 	```html
@@ -70,14 +69,6 @@ Import all element:
 		element='login-template'
 		else-state='dashboard'></dna-view>
 	```
-
-	Set a not found page
-	```html
-	<dna-view
-		state='notfound'
-		element='notfound-template'></dna-view>
-	```
-
 
 3. Configure `dna-router`:
 	```html
@@ -130,6 +121,21 @@ Import all element:
 	</dna-many-view>
 	```
 	In above example, many view is visible for states `abc, xyz and home`. For any other state none of its content is visible. `"This Example"` is not visible for some state, i.e `login`.
+
+6. Define not found page:
+
+	To define a route to page not found use the state `notfound`, set the route to page not found in `url` and create a `dna-view` with state `notfound` adding an element to be displayed if the page is not found.
+
+	Define the route
+	```html
+	<dna-new-state state='notfound' route='/notfound'></dna-new-state>
+	```
+	Create a `dna-view` with state `notfound` and set an element that will be shown when no page is found
+	```html
+	<dna-view
+		state='notfound'
+		element='notfound-template'></dna-view>
+	```
 
 # Executing a function on page load
 `dna-router` provides a `DNA` object.
