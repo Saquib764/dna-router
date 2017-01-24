@@ -73,7 +73,8 @@
 					utility.go(res.found, res.param, true)
 				}else{
 					console.log('Route not found');
-					window.location.hash = utility.getState('notfound').route || '/';
+					if(config.wrongUrl)
+						utility.go(config.wrongUrl)
 				}
 			}
 			else{
@@ -280,7 +281,9 @@
 
 
         	if(element){
-	        	var file = '/'+element+'.html';
+        		var ell = element.replace(/-(.)/g, function($1) { return $1.toUpperCase(); }).replace(/-/g, '');
+
+	        	var file = '/'+ell+'.html';
 	        	template +=file;
 
 	        	if(config.manualLoad){
@@ -414,6 +417,7 @@
 	var config = {
 		auth: false,
 		home: 'home',
+		wrongUrl: null,
 		template: '',
 		elseState: null,
 		manualLoad: false,
@@ -450,6 +454,10 @@
 				type: Object,
 				value:{},
 				observer: '_contextChanged'
+			},
+			wrongUrl: {
+				type: String,
+				observer: '_wrongUrl',
 			}
 		},
 		ready: function(){
@@ -475,6 +483,9 @@
 		},
 		_elseState: function(){
 			config.elseState = this.elseState;
+		},
+		_wrongUrl: function(){
+			config.wrongUrl = this.wrongUrl;
 		},
 		on: function(event, func){
 			this.addEventListener(event, func)

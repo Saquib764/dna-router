@@ -122,9 +122,20 @@ Import all element:
 	```
 	In above example, many view is visible for states `abc, xyz and home`. For any other state none of its content is visible. `"This Example"` is not visible for some state, i.e `login`.
 
-6. Define not found page:
+6. Define State for wrong url or page not found:
+	
+	Declare state to be used for wrong url in `dna-config` :
 
-	To define a route to page not found use the state `notfound`, set the route to page not found in `url` and create a `dna-view` with state `notfound` adding an element to be displayed if the page is not found.
+	```html
+	<dna-config
+		id='conf'
+		home='some state'
+		wrong-url='notfound'
+		auth  // authorise
+		template='\templates'> </dna-config>
+	```
+
+	Then simply define a state with name `notfound` (state name can be anything) and create a view for same.
 
 	Define the route
 	```html

@@ -1,0 +1,21 @@
+<dom-module id="page-not-found-template">
+	<style>
+	    :host {
+	      position: relative;
+	      width: 100px;
+	    }
+	</style>
+	<template>
+		Aa! A! Page not found!
+	</template>
+</dom-module>
+
+<script>
+
+Polymer({
+	is: 'page-not-found-template',
+	attached: function(){
+		console.log('Wrong url! Page not found.')
+	},
+});
+</script>
