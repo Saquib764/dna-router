@@ -1,10 +1,10 @@
 {
   "name": "dna-router",
-  "version": "0.5.1",
+  "version": "2.0.0",
   "authors": [
     "Saquib <saquibvswild@gmail.com>"
   ],
-  "description": "Angular's UI-router style router provider for Polymer 1.0",
+  "description": "Angular's UI-router style router provider for Polymer 2.0",
   "keywords": [
     "Polymer",
     "Router",

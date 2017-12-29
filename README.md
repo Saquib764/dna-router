@@ -1,4 +1,5 @@
 # dna-router
+`Note: ` Update to Polymer 2.0
 
 `Note: ` `with-auth` and `with-no-auth` attributes is now added on `dna-state` instead of `dna-view`.
 
