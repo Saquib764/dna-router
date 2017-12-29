@@ -1,14 +1,15 @@
-<dom-module id="home-template">
-	<style>
-	    :host {
-	      position: relative;
-	      width: 100px;
-	    }
-	</style>
+	<dom-module id="home-template">
 	<template>
+		<style>
+		    :host {
+		      position: relative;
+		      width: 100px;
+		    }
+		</style>
+		
 		<div class="input">
 		<h2>Hi your page is authenticated, and you have reached home.</h2>
-		<a is='s-ref' goto='["contact"]'>Contact</a>  
+		<dna-a goto="contact" params='[[i]]'>Hey</dna-a>
 		<br />
 		<input type="button" on-click='logout' value="Logout" />
 		</div>
@@ -17,20 +18,45 @@
 
 <script>
 
-Polymer({
-	is: 'home-template',
-	properties: {
-		params: {
-			type: 'Object'
+
+	class homeTemplate extends Polymer.Element {
+		static get is() { return  'home-template' }
+
+		constructor(){
+			super()
+
+			this.i = { id: 3}
 		}
-	},
-	logout: function(){
-		var conf = document.querySelector('#conf');
-		conf.auth = false;
-	},
-	attached: function(){
-		console.log('Hi your page is authenticated, and you have reached home.');
-		console.log('context : ', $state.context)
-	},
-});
+
+		connectedCallback(){
+			super.connectedCallback()
+			console.log('Hi your page is authenticated, and you have reached home.');
+			var p = DNA.$State()
+			console.log(p)
+		}
+
+		disconnectedCallback(){
+			super.disconnectedCallback()
+			console.log("Home exited")
+		}
+
+	}
+	customElements.define(homeTemplate.is, homeTemplate);
+
+// Polymer({
+// 	is: 'home-template',
+// 	properties: {
+// 		params: {
+// 			type: 'Object'
+// 		}
+// 	},
+// 	logout: function(){
+// 		var conf = document.querySelector('#conf');
+// 		conf.auth = false;
+// 	},
+// 	attached: function(){
+// 		console.log('Hi your page is authenticated, and you have reached home.');
+// 		console.log('context : ', $state.context)
+// 	},
+// });
 </script>

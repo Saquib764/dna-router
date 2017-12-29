@@ -1,0 +1,62 @@
+
+<dom-module id="dna-config">
+	<template>
+		<style type="text/css">
+			:host{
+				display: none;
+			}
+		</style>
+	</template>
+
+</dom-module>
+
+<dom-module id="dna-state">
+	<template>
+		<style type="text/css">
+			:host{
+				display: none;
+			}
+		</style>
+	</template>
+
+</dom-module>
+
+
+<dom-module id="dna-view">
+	<template>
+		<style type="text/css">
+			:host{
+				display: none;
+				position: relative;
+			}
+			:host(.active){
+				display: block;
+			}
+		</style>
+		<slot></slot>
+	</template>
+</dom-module>
+
+<dom-module id="dna-many-view">
+	<template>
+		<style type="text/css">
+			:host{
+				display: none;
+				position: relative;
+			}
+			:host(.active){
+				display: block;
+			}
+		</style>
+		<slot></slot>
+	</template>
+</dom-module>
+
+
+<dom-module id="dna-a">
+	<template>
+		<a href="[[href]]"><slot></slot></a>
+	</template>
+
+</dom-module>
+

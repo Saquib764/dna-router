@@ -1,14 +1,14 @@
 <dom-module id="contact-template">
-	<style>
-	    :host {
-	      position: relative;
-	      width: 100px;
-	    }
-	</style>
 	<template>
+		<style>
+		    :host {
+		      position: relative;
+		      width: 100px;
+		    }
+		</style>
 		<div class="input">
 		<h2>contact</h2>
-		<a is='s-ref' goto='["home"]'>Home</a> 
+		<!-- <a is='s-ref' goto='["home"]'>Home</a>  -->
 
 		</div>
 	</template>
@@ -16,27 +16,38 @@
 
 <script>
 
-Polymer({
-	is: 'contact-template',
-	properties: {
-		params: {
-			type: 'Object'
-		},
-	},
-	behaviors: [],
-	attached: function(){
-		console.log('contact');
-		$http({
-			method: 'POST',
-			url: 'http://httpbin.org/post',
-			headers: {
+	class contactTemplate extends Polymer.Element {
+		static get is() { return  'contact-template' }
 
-			},
-			data: {
-				is: 'dfd',
-				ad: [1,2]
-			}
-		});
-	},
-});
+
+		connectedCallback(){
+			super.connectedCallback()
+			console.log('Contact will be here.');
+		}
+	}
+	customElements.define(contactTemplate.is, contactTemplate);
+
+// Polymer({
+// 	is: 'contact-template',
+// 	properties: {
+// 		params: {
+// 			type: 'Object'
+// 		},
+// 	},
+// 	behaviors: [],
+// 	attached: function(){
+// 		console.log('contact');
+// 		$http({
+// 			method: 'POST',
+// 			url: 'http://httpbin.org/post',
+// 			headers: {
+
+// 			},
+// 			data: {
+// 				is: 'dfd',
+// 				ad: [1,2]
+// 			}
+// 		});
+// 	},
+// });
 </script>

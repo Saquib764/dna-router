@@ -1,8 +1,9 @@
 # dna-router
 
-`Note: ` `on-auth` and `on-no-auth` attributes changed to `with-auth` and `with-no-auth` due to `on-*` conflicts with current update of Polymer. Thanks to <a href='https://github.com/jom'> jom</a>
+`Note: ` `with-auth` and `with-no-auth` attributes is now added on `dna-state` instead of `dna-view`.
 
-`ui-router` is an advance Angular's ui-router style all html router provider for Polymer. It has `auth` status which enables user to show different views for same state.
+`dna-router` is an advance Angular's ui-router style all html router provider for Polymer. With in built authentication management.
+
 Inspired by ui-router: https://github.com/angular-ui/ui-router
 
 Install using bower:
@@ -12,7 +13,7 @@ bower install dna-router
 `Update:` Added `Vulcanize` support.
 `Use:` Add 'manual-load' attribute in 'dna-config' tag and then import the vulcanized templates in your project.
 
-Download starter kit at : <a href='https://github.com/Saquib764/starter-kit-dna-router'>https://github.com/Saquib764/starter-kit-dna-router</a>
+<!-- Download starter kit at : <a href='https://github.com/Saquib764/starter-kit-dna-router'>https://github.com/Saquib764/starter-kit-dna-router</a> -->
 
 
 Import all element:
@@ -23,14 +24,39 @@ Import all element:
 1. Define states and routes:
 
 	```html
-	<dna-new-state state='home' route='/home'></dna-new-state>
-	<dna-new-state state='user' route='/user/:id/'></dna-new-state>
+	<dna-state state='home' route='/home'></dna-state>
+	<dna-state state='user' route='/user/:id/'></dna-state>
 	```
+	If states requires authentication.
+	```html
+	<dna-state
+		state='home'
+		with-auth
+		route='/home'
+		else-redirect='login'></dna-view>
+	```
+	If user is not authenticated, it will be redirected to 'login' state. 
+
+	Show some page only to 'unauthenticated' users
+	```html
+	<dna-state
+		state='login'
+		with-no-auth
+		route='/login'
+		else-redirect='home'></dna-state>
+	```
+
+	State without `auth` attribute are shown irrespective of auth status
+
 2. Defining views. You can have multiple views for a single state.
 	```html
 	<dna-view
 		state='home'
 		element='home-template'></dna-view>
+
+	<dna-view
+		state='home'
+		element='home-another-template'></dna-view>
 	```
 	By default, `dna-view` converts `element` name into camel case and imports file named so in base directory. This file must contain `home-template` element. Example, above imports `\homeTemplate.html`.
 
@@ -45,72 +71,33 @@ Import all element:
 	```
 	`NOTE:` Set global template path using `dna-config`.
 
-	If states requires authentication.
-	```html
-	<dna-view
-		state='home'
-		with-auth
-		element='auth-home-template'
-		else-element='home-template'></dna-view>
-	```
-	If user is not authenticated, `home-template` will be shown. To redirect to a different state. Example, `login`.
-	```html
-	<dna-view
-		state='home'
-		with-auth
-		element='auth-home-template'
-		else-state='login'></dna-view>
-	```
-	Show some page only to 'unauthenticated' users
-	```html
-	<dna-view
-		state='home'
-		with-no-auth
-		element='login-template'
-		else-state='dashboard'></dna-view>
-	```
 
 3. Configure `dna-router`:
 	```html
 	<dna-config
 		id='conf'
 		home='some state'
-		auth  // authorise
 		template='\templates'> </dna-config>
 	```
 	By default `home` is state named `home` and `auth` is false.
 
 	To authosrise on fly using javascript:
 	```js
-	var conf = document.querySelector('#conf');
-	// Sending login context to views.
-	// Access it using '$state' global variable.
-	conf.context = {
-		author: 'Saquib Alam',
-		message: 'Star me :)'
-	};
-	conf.auth = true
+	DNA.Auth.authorised = true
+	//	Then reload
+	var state = DNA.$State()
+	state.reload()
 	```
-4. `S-ref` element:
+4. `dna-a` element:
+	Equivalent to `a` tag in html.
 	- With goto and params property
 		```html
-		<a is='s-ref' goto='["users"]' params='{"user_id":"56"}'>To state users</a>
+		<dna-a goto="contact">To state X</dna-a>
 		```
-	You can use a Polymer variable in your params :
+	- You can use a Polymer variable in your params :
 		```html
-		<a is='s-ref' goto='["users"]' params='{"user_id":"{{userId}}"}'>To state users</a>
+		<dna-a goto="stateY" params='[[parameterObject]]'>To state Y</dna-a>
 		```
-
-	- With goto property only *(backward compatibility)*
-
-		`goto` takes an array as input. First is state name and second item is object with params. Its similar to `ui-router` `s-ref`.
-
-		```html
-		<a is='s-ref' goto='["users",{"user_id":"56"}]'>To state users</a>
-		```
-		However you can't use Polymer variables that way.
-
-	Use `$state.params.user_id` to access params.
 
 5. `dna-many-view` element.
 	This element is visible only if any `dna-view` inside this element or any of it's `state` is active.
@@ -122,7 +109,7 @@ Import all element:
 	```
 	In above example, many view is visible for states `abc, xyz and home`. For any other state none of its content is visible. `"This Example"` is not visible for some state, i.e `login`.
 
-6. Define State for wrong url or page not found:
+<!-- 6. Define State for wrong url or page not found:
 	
 	Declare state to be used for wrong url in `dna-config` :
 
@@ -147,15 +134,36 @@ Import all element:
 		state='notfound'
 		element='notfound-template'></dna-view>
 	```
+ -->
 
 # Executing a function on page load
 `dna-router` provides a `DNA` object.
 ```js
-DNA.run = function(){
+DNA.run = function(next){
 	// Do your stuff
+	//	Check for login status in cookies
+	//	Load your assets
+
+	
+	next()	// Donot forget to call this when using `run` function.
 }
 ```
 
+# Available global variable and function
+1.	DNA.Auth: Contain authencation information. Can be used to share information accros the app just like a normal javascript variable
+2.	DNA.$State(): Returns current state and its parameters. Also provide two function `go` and `reload`.
+
+	
+	```js
+	var state = DNA.$State()
+
+	//	GO example
+	state.go("next_state_name", parameterObjectOptional)
+
+	//	RELOAD example
+	state.reload()
+
+	```
 
 
 Enjoy :)
